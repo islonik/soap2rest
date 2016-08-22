@@ -4,7 +4,7 @@ JavaEE: security, soap, rest.
 
 SOAP part works here as a Strangler Application pattern. 
 
-How to setup this applications in WildFly 8.2.1.Final:
+How to setup this applications in WildFly (8.2.1.Final and 10.0.0.Final versions are tested):
 1) create a security-domain:
     <security-domain name="Soap2RestSecurityDomain" cache-type="default">
         <authentication>

@@ -31,7 +31,6 @@ import java.util.concurrent.Executors;
         targetNamespace = "http://nikilipa.org/Service/DeliverService/v01/DeliverServiceWS",
         portName = "DeliverServiceWS_Port",
         name = "DeliverServiceWS",
-        wsdlLocation = "classpath:/wsdl/ds.wsdl",
         endpointInterface = "org.javaee.soap2rest.impl.generated.ds.ws.HandleRequestPortType"
 )
 public class SoapWebService implements HandleRequestPortType {
