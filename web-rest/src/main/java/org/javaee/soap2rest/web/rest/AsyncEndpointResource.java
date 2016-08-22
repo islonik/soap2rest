@@ -1,13 +1,17 @@
 package org.javaee.soap2rest.web.rest;
 
 import org.javaee.soap2rest.impl.rest.services.ResponseGeneratorService;
+import org.javaee.soap2rest.web.rest.utils.LoggerInterceptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.Map;
@@ -32,7 +36,9 @@ public class AsyncEndpointResource {
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
     @RolesAllowed(RestRoles.REST_ROLE)
+    @Interceptors(LoggerInterceptor.class)
     public Response response(
+            @Context HttpServletRequest httpRequest,
             Map<String, String> object) {
 
         log.warn(String.format("Async request was accepted. Map content = %s", object.toString()));

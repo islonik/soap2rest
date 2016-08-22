@@ -9,10 +9,14 @@ import org.javaee.soap2rest.impl.soap.services.SoapOrchestrator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Resource;
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.jws.WebParam;
 import javax.jws.WebService;
+import javax.servlet.http.HttpServletRequest;
+import javax.xml.ws.WebServiceContext;
+import javax.xml.ws.handler.MessageContext;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -34,6 +38,9 @@ public class SoapWebService implements HandleRequestPortType {
 
     private final Logger log = LoggerFactory.getLogger(SoapWebService.class);
 
+    @Resource
+    private WebServiceContext wsContext;
+
     @Inject
     private ParserService parserService;
 
@@ -48,7 +55,18 @@ public class SoapWebService implements HandleRequestPortType {
     public DSResponse handleRequest(
             @WebParam(name = "DSRequest", targetNamespace = "http://www.nikilipa.org/SoapServiceRequest/v01", partName = "parameter")
                     DSRequest dsRequest) {
-        log.info("We accepted SOAP request!");
+
+        MessageContext mc = wsContext.getMessageContext();
+        HttpServletRequest httpRequest = (HttpServletRequest)mc.get(MessageContext.SERVLET_REQUEST);
+
+        log.info(String.format(
+                "\nWe accepted SOAP request! Request url = %s, Client Address = %s, Client Host = %s, Client Port = %s, User = %s",
+                httpRequest.getRequestURL().toString(),
+                httpRequest.getRemoteAddr(),
+                httpRequest.getRemoteHost(),
+                httpRequest.getRemotePort(),
+                httpRequest.getRemoteUser()
+        ));
 
         parserService.setUpDsRequest(dsRequest);
 
