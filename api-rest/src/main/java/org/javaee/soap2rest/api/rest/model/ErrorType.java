@@ -1,4 +1,4 @@
-package org.javaee.soap2rest.impl.rest.model;
+package org.javaee.soap2rest.api.rest.model;
 
 /**
  * Created by nikilipa on 8/13/16.

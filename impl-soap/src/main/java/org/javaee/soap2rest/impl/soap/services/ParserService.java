@@ -1,7 +1,7 @@
 package org.javaee.soap2rest.impl.soap.services;
 
+import org.javaee.soap2rest.api.rest.model.RestResponse;
 import org.javaee.soap2rest.impl.generated.ds.ws.*;
-import org.javaee.soap2rest.impl.soap.model.RestResponse;
 import org.javaee.soap2rest.utils.services.JsonService;
 
 import javax.enterprise.context.ApplicationScoped;

@@ -17,6 +17,11 @@
     <dependencies>
         <dependency>
             <groupId>org.javaee.soap2rest</groupId>
+            <artifactId>api-rest</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.javaee.soap2rest</groupId>
             <artifactId>utils</artifactId>
             <version>${project.parent.version}</version>
         </dependency>

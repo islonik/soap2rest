@@ -3,6 +3,11 @@
         "http://java.sun.com/dtd/web-app_2_3.dtd" >
 <web-app>
 
+    <context-param>
+        <param-name>resteasy.providers</param-name>
+        <param-value>org.javaee.soap2rest.web.rest.utils.EjbExceptionHandler</param-value>
+    </context-param>
+
     <security-constraint>
         <web-resource-collection>
             <web-resource-name>Soap2RestSecurityDomain</web-resource-name>

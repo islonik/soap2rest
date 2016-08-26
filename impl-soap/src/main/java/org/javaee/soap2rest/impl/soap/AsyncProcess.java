@@ -6,12 +6,12 @@ import org.javaee.soap2rest.impl.soap.services.SoapOrchestrator;
 /**
  * Created by nikilipa on 8/13/16.
  */
-public class AsyncRequest implements Runnable {
+public class AsyncProcess implements Runnable {
 
     private final SoapOrchestrator soapOrchestrator;
     private final DSRequest dsRequest;
 
-    public AsyncRequest(SoapOrchestrator soapOrchestrator, DSRequest dsRequest) {
+    public AsyncProcess(SoapOrchestrator soapOrchestrator, DSRequest dsRequest) {
         this.soapOrchestrator = soapOrchestrator;
         this.dsRequest = dsRequest;
     }

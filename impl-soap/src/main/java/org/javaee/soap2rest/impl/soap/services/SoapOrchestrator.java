@@ -1,10 +1,10 @@
 package org.javaee.soap2rest.impl.soap.services;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import org.javaee.soap2rest.api.rest.model.RestResponse;
 import org.javaee.soap2rest.impl.generated.ds.ws.DSRequest;
 import org.javaee.soap2rest.impl.generated.ds.ws.DSResponse;
 import org.javaee.soap2rest.impl.generated.ds.ws.KeyValuesType;
-import org.javaee.soap2rest.impl.soap.model.RestResponse;
 import org.javaee.soap2rest.utils.services.JsonService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

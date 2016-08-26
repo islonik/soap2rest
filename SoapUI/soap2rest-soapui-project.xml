@@ -74,16 +74,16 @@
     </xs:schema>
     <xs:schema elementFormDefault="qualified" targetNamespace="http://nikilipa.org/Service/DeliverService/v01/DeliverServiceWS"/>
   </wsdl:types>
-  <wsdl:message name="handleResponse">
+  <wsdl:desc name="handleResponse">
     <wsdl:part element="ns2:DSResponse" name="parameter"/>
-  </wsdl:message>
-  <wsdl:message name="handleRequest">
+  </wsdl:desc>
+  <wsdl:desc name="handleRequest">
     <wsdl:part element="ns1:DSRequest" name="parameter"/>
-  </wsdl:message>
+  </wsdl:desc>
   <wsdl:portType name="handleRequest_PortType">
     <wsdl:operation name="handleRequest">
-      <wsdl:input message="tns:handleRequest"/>
-      <wsdl:output message="tns:handleResponse"/>
+      <wsdl:input desc="tns:handleRequest"/>
+      <wsdl:output desc="tns:handleResponse"/>
     </wsdl:operation>
   </wsdl:portType>
   <wsdl:binding name="DeliverServiceWS_Binder" type="tns:handleRequest_PortType">

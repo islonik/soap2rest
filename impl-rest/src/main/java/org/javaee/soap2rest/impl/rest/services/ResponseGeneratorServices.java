@@ -1,8 +1,8 @@
 package org.javaee.soap2rest.impl.rest.services;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import org.javaee.soap2rest.impl.rest.model.ErrorType;
-import org.javaee.soap2rest.impl.rest.model.RestResponse;
+import org.javaee.soap2rest.api.rest.model.ErrorType;
+import org.javaee.soap2rest.api.rest.model.RestResponse;
 import org.javaee.soap2rest.utils.services.JsonService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,11 +15,25 @@ import java.util.Random;
  * Created by nikilipa on 8/13/16.
  */
 @ApplicationScoped
-public class ResponseGeneratorService {
-    private static final Logger log = LoggerFactory.getLogger(ResponseGeneratorService.class);
+public class ResponseGeneratorServices {
+    private static final Logger log = LoggerFactory.getLogger(ResponseGeneratorServices.class);
 
     @Inject
     private JsonService jsonService;
+
+    public String getErrorResponse(String code, String message) {
+        RestResponse restResponse = new RestResponse();
+        ErrorType errorType = new ErrorType();
+        errorType.setCode(code);
+        errorType.setMessage(message);
+        restResponse.setError(errorType);
+        try {
+            return jsonService.objectToJson(restResponse);
+        } catch (JsonProcessingException e) {
+            log.error(e.getMessage(), e);
+            return getSimpleJsonError(e);
+        }
+    }
 
     public String getRandomResponse() {
         try {
@@ -82,19 +96,26 @@ public class ResponseGeneratorService {
             return jsonService.objectToJson(restResponse);
         } catch (JsonProcessingException e) {
             log.error(e.getMessage(), e);
-            return String.format(
-                    "{\n" +
-                            "  \"error\" : {\n" +
-                            "    \"code\" : \"%s\",\n" +
-                            "    \"message\" : \"%s\"\n" +
-                            "  }\n" +
-                            "}",
-                    "500",
-                    e.getMessage()
-            );
+            return getSimpleJsonError(e);
         }
     }
 
+    public String getSimpleJsonError(Exception e) {
+        return getSimpleJsonError("500", e.getMessage());
+    }
+
+    public String getSimpleJsonError(String code, String desc) {
+        return String.format(
+                "{\n" +
+                        "  \"error\" : {\n" +
+                        "    \"code\" : \"%s\",\n" +
+                        "    \"message\" : \"%s\"\n" +
+                        "  }\n" +
+                        "}",
+                code,
+                desc
+        );
+    }
 
     public String getAckResponse() {
         return String.format(

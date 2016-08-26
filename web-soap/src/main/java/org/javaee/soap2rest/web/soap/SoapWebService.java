@@ -3,7 +3,7 @@ package org.javaee.soap2rest.web.soap;
 import org.javaee.soap2rest.impl.generated.ds.ws.DSRequest;
 import org.javaee.soap2rest.impl.generated.ds.ws.DSResponse;
 import org.javaee.soap2rest.impl.generated.ds.ws.HandleRequestPortType;
-import org.javaee.soap2rest.impl.soap.AsyncRequest;
+import org.javaee.soap2rest.impl.soap.AsyncProcess;
 import org.javaee.soap2rest.impl.soap.services.ParserService;
 import org.javaee.soap2rest.impl.soap.services.SoapOrchestrator;
 import org.slf4j.Logger;
@@ -70,7 +70,7 @@ public class SoapWebService implements HandleRequestPortType {
         parserService.setUpDsRequest(dsRequest);
 
         if (parserService.isAsync(dsRequest)) {
-            executorService.execute(new AsyncRequest(soapOrchestrator, dsRequest));
+            executorService.execute(new AsyncProcess(soapOrchestrator, dsRequest));
             return parserService.getAckDSResponse(dsRequest);
         }
 

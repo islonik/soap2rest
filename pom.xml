@@ -15,6 +15,7 @@
         <module>impl-soap</module>
         <module>web-rest</module>
         <module>web-soap</module>
+        <module>api-rest</module>
     </modules>
 
     <properties>

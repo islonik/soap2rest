@@ -1,18 +1,17 @@
 package org.javaee.soap2rest.impl.soap.services;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import org.javaee.soap2rest.api.rest.model.AsyncRestRequest;
 import org.javaee.soap2rest.impl.generated.ds.ws.DSResponse;
 import org.javaee.soap2rest.impl.soap.model.AuthUser;
 import org.javaee.soap2rest.impl.soap.rest.PostClient;
 import org.javaee.soap2rest.impl.soap.rest.PutClient;
-import org.javaee.soap2rest.utils.properties.S2RProperty;
 import org.javaee.soap2rest.utils.services.JsonService;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.spi.CDI;
 import javax.inject.Inject;
 import javax.ws.rs.client.Entity;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
@@ -52,13 +51,13 @@ public class RestService {
 
         String url = String.format("%s/response", putClient.getRestHost());
 
-        Map<String, String> map2rest = new HashMap<>();
-        map2rest.putIfAbsent("messageId", dsResponse.getHeader().getMessageId());
-        map2rest.putIfAbsent("conversationId", dsResponse.getHeader().getConversationId());
-        map2rest.putIfAbsent("code", dsResponse.getBody().getServiceOrderStatus().getStatusType().getCode());
-        map2rest.putIfAbsent("message", dsResponse.getBody().getServiceOrderStatus().getStatusType().getDesc());
+        AsyncRestRequest asyncRestRequest = new AsyncRestRequest();
+        asyncRestRequest.setMessageId(dsResponse.getHeader().getMessageId());
+        asyncRestRequest.setConversationId(dsResponse.getHeader().getConversationId());
+        asyncRestRequest.setCode(dsResponse.getBody().getServiceOrderStatus().getStatusType().getCode());
+        asyncRestRequest.setDesc(dsResponse.getBody().getServiceOrderStatus().getStatusType().getDesc());
 
-        String postResponse = putClient.send(user.getUser(), user.getPass(), url, Entity.json(jsonService.objectToJson(map2rest)));
+        String postResponse = putClient.send(user.getUser(), user.getPass(), url, Entity.json(jsonService.objectToJson(asyncRestRequest)));
 
         return postResponse;
     }

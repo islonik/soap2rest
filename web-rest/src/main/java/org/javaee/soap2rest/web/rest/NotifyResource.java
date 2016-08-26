@@ -1,6 +1,6 @@
 package org.javaee.soap2rest.web.rest;
 
-import org.javaee.soap2rest.impl.rest.services.ResponseGeneratorService;
+import org.javaee.soap2rest.impl.rest.services.ResponseGeneratorServices;
 import org.javaee.soap2rest.web.rest.utils.LoggerInterceptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +28,7 @@ public class NotifyResource {
     private static final Logger log = LoggerFactory.getLogger(AsyncEndpointResource.class);
 
     @Inject
-    private ResponseGeneratorService responseGeneratorService;
+    private ResponseGeneratorServices responseGeneratorServices;
 
     // http://localhost:8080/soap2rest/rest/v1/notify
     @POST
@@ -42,7 +42,7 @@ public class NotifyResource {
             Map<String, String> object) {
 
         log.warn(String.format("Notify request was accepted. Map content = %s", object.toString()));
-        return Response.ok().entity(responseGeneratorService.getRandomResponse()).build();
+        return Response.ok().entity(responseGeneratorServices.getRandomResponse()).build();
     }
 
 }
