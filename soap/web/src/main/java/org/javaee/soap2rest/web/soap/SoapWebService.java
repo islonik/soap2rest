@@ -59,7 +59,7 @@ public class SoapWebService implements HandleRequestPortType {
         HttpServletRequest httpRequest = (HttpServletRequest)mc.get(MessageContext.SERVLET_REQUEST);
 
         log.info(String.format(
-                "\nWe accepted SOAP request! Request url = %s, Client Address = %s, Client Host = %s, Client Port = %s, User = %s",
+                "%nWe accepted SOAP request! Request url = %s, Client Address = %s, Client Host = %s, Client Port = %s, User = %s",
                 httpRequest.getRequestURL().toString(),
                 httpRequest.getRemoteAddr(),
                 httpRequest.getRemoteHost(),

@@ -4,6 +4,7 @@ import javax.ws.rs.client.ClientRequestContext;
 import javax.ws.rs.client.ClientRequestFilter;
 import javax.ws.rs.core.MultivaluedMap;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
 /**
@@ -27,6 +28,6 @@ public class Authenticator implements ClientRequestFilter {
 
     public String getBasicAuthentication() {
         String token = this.user + ":" + this.password;
-        return "Basic " + Base64.getEncoder().encodeToString(token.getBytes());
+        return "Basic " + Base64.getEncoder().encodeToString(token.getBytes(StandardCharsets.UTF_8));
     }
 }

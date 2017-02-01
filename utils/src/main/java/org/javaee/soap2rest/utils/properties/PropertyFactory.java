@@ -17,13 +17,9 @@ public class PropertyFactory {
 
     private static final String JBOSS_PROPERTIES_HOME = System.getProperty("jboss.server.config.dir") + "/properties/";
 
-    protected static final List<String> locations = new ArrayList<String>() {{
+    private static final List<String> locations = new ArrayList<String>() {{
         add("javaee/projects");
     }};
-
-    public static void addLocation(String location) {
-        locations.add(location);
-    }
 
     protected String getPropertyValue(String propertyName) {
         for (String location : locations) {

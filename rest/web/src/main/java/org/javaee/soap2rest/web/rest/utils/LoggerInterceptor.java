@@ -30,7 +30,7 @@ public class LoggerInterceptor implements Serializable {
 
         log.info(
                 String.format(
-                        "\nWe accepted %s-request where url = %s, Client Address = %s, Client Host = %s, Client Port = %s, User = %s",
+                        "%nWe accepted %s-request where url = %s, Client Address = %s, Client Host = %s, Client Port = %s, User = %s",
                         httpRequest.getMethod(),
                         httpRequest.getRequestURL().toString(),
                         httpRequest.getRemoteAddr(),
@@ -49,7 +49,7 @@ public class LoggerInterceptor implements Serializable {
         Response response = (Response) proceedObject;
 
         log.info(String.format(
-                "Response to a requester:\n%s", response.getEntity()
+                "Response to a requester:%n%s", response.getEntity()
         ));
 
         return proceedObject;

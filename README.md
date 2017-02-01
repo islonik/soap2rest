@@ -51,6 +51,11 @@ restadmin=restadmin
 soap2rest=WEBSERVICE.SOAP2REST.SOAP
 restadmin=WEBSERVICE.SOAP2REST.REST
 ```
+6) create the ./standalone/configuration/properties/javaee/projects directory.
+7) create the file s2r.properties with the content:
+```properties
+rest.host=http://localhost:8078/soap2rest/rest/v1
+```
 
 ### Working hints
 

@@ -21,7 +21,7 @@ public class ParserServices {
     private JsonServices jsonServices;
 
     public boolean isAsync(DSRequest dsRequest) {
-        return new Boolean(dsRequest.getBody().getAsyncronousResponse());
+        return Boolean.valueOf(dsRequest.getBody().getAsyncronousResponse());
     }
 
     public void setUpDsRequest(DSRequest dsRequest) {

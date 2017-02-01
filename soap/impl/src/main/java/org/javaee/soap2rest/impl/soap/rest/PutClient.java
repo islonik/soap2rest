@@ -38,7 +38,7 @@ public class PutClient {
                 new Authenticator(user, pass)
         );
 
-        log.info(String.format("Put request to S2R.rest:\n%s\n%s", endpoint, body.getEntity()));
+        log.info(String.format("Put request to S2R.rest:%n%s%n%s", endpoint, body.getEntity()));
 
         Response response = jaxrsClient
                 .target(endpoint)

@@ -33,7 +33,7 @@ public class ValidationServices {
             badCases.append("Validation failed.");
             while (iterator.hasNext()) {
                 ConstraintViolation<AsyncRestRequest> badCase = iterator.next();
-                badCases.append(String.format("\n\tParam '%s' '%s'", badCase.getPropertyPath(), badCase.getMessage()));
+                badCases.append(String.format("%n\tParam '%s' '%s'", badCase.getPropertyPath(), badCase.getMessage()));
             }
             return Optional.of(
                     Response

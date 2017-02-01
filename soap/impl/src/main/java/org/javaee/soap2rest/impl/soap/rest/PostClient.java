@@ -39,7 +39,7 @@ public class PostClient {
                 new Authenticator(user, pass)
         );
 
-        log.info(String.format("Post request to S2R.rest:\n%s\n%s", endpoint, body.getEntity()));
+        log.info(String.format("Post request to S2R.rest:%n%s%n%s", endpoint, body.getEntity()));
 
         Response response = jaxrsClient
                 .target(endpoint)
@@ -51,7 +51,7 @@ public class PostClient {
         // For Jersey 2.x use
         String result = response.readEntity(String.class);
 
-        log.info("Post response from S2R.rest:\n" + result);
+        log.info("Post response from S2R.rest\n" + result);
 
         jaxrsClient.close();
 
