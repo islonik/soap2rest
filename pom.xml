@@ -11,14 +11,12 @@
 
     <modules>
         <module>utils</module>
-        <module>impl-rest</module>
-        <module>impl-soap</module>
-        <module>web-rest</module>
-        <module>web-soap</module>
-        <module>api-rest</module>
+        <module>rest</module>
+        <module>soap</module>
     </modules>
 
     <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <jasckson.version>2.8.1</jasckson.version>
     </properties>
 
@@ -60,8 +58,8 @@
             </dependency>
             <dependency>
                 <groupId>org.mockito</groupId>
-                <artifactId>mockito-all</artifactId>
-                <version>1.10.19</version>
+                <artifactId>mockito-core</artifactId>
+                <version>2.1.0</version>
                 <scope>test</scope>
             </dependency>
         </dependencies>
@@ -85,9 +83,9 @@
             <artifactId>junit</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-all</artifactId>
-        </dependency>
+		<groupId>org.mockito</groupId>
+		<artifactId>mockito-core</artifactId>
+	    </dependency>
     </dependencies>
 
     <build>
@@ -137,6 +135,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.10.4</version>
                 <configuration>
                     <additionalparam>-Xdoclint:none</additionalparam>
                 </configuration>

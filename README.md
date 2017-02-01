@@ -6,6 +6,8 @@ SOAP part works here as a Strangler Application pattern.
 
 How to setup this applications in WildFly (8.2.1.Final and 10.0.0.Final versions are tested):
 1) create a security-domain:
+```xml
+
     <security-domain name="Soap2RestSecurityDomain" cache-type="default">
         <authentication>
             <login-module code="UsersRoles" flag="required">
@@ -15,13 +17,18 @@ How to setup this applications in WildFly (8.2.1.Final and 10.0.0.Final versions
             </login-module>
         </authentication>
     </security-domain>
+```
 2) create soap2rest-users.properties file with content:
+```properties
 soap2rest=soap2rest
 restadmin=restadmin
+```
 
 3) create soap2rest-roles.properties file with content:
+```properties
 soap2rest=WEBSERVICE.SOAP2REST.SOAP
 restadmin=WEBSERVICE.SOAP2REST.REST
+```
 
 4) Deploy war-files.
 
