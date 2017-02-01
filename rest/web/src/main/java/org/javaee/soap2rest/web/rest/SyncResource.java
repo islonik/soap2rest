@@ -20,25 +20,34 @@ import java.util.Map;
  * Created by nikilipa on 8/13/16.
  */
 @Stateless
-@Path("/")
+@Path("/sync")
 @RolesAllowed({
         RestRoles.REST_ROLE
 })
 public class SyncResource {
-    private static final Logger log = LoggerFactory.getLogger(AsyncResource.class);
+
+    private static final Logger log = LoggerFactory.getLogger(SyncResource.class);
 
     @Inject
     private ResponseGeneratorServices responseGeneratorServices;
 
-    // http://localhost:8080/soap2rest/rest/v1/notify
+    /**
+
+     curl -X POST -H "Content-Type: application/json" -d '{
+        "test44" : "test55"
+     }' http://localhost:8078/soap2rest/rest/v1/sync/response --user restadmin:restadmin
+
+     */
+
+    // http://localhost:8080/soap2rest/rest/v1/sync/response
     @POST
-    @Path("/notify")
+    @Path("/response")
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
     @RolesAllowed(RestRoles.REST_ROLE)
     @Interceptors(LoggerInterceptor.class)
-    public Response notify(
-            @Context HttpServletRequest httpRequest,
+    public Response response(
+            @Context HttpServletRequest httpRequest, // LoggerInterceptor
             Map<String, String> object) {
 
         log.warn(String.format("Notify request was accepted. Map content = %s", object.toString()));

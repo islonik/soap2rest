@@ -22,4 +22,8 @@
         </dependency>
     </dependencies>
 
+    <build>
+        <finalName>s2r-rest</finalName>
+    </build>
+
 </project>

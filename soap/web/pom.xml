@@ -16,11 +16,14 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.javaee.soap2rest</groupId>
-            <artifactId>impl-soap</artifactId>
+            <groupId>org.javaee.soap2rest.soap</groupId>
+            <artifactId>impl</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>
 
+    <build>
+        <finalName>s2r-soap</finalName>
+    </build>
 
 </project>

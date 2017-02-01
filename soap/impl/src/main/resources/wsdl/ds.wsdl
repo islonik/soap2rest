@@ -72,6 +72,7 @@
             <xs:complexType name="ServiceOrder">
                 <xs:sequence>
                     <xs:element name="ServiceOrderID" type="xs:string"/>
+                    <xs:element name="ServiceName"    type="xs:string"/>
                     <xs:element name="Params" type="header:keyValuesType" minOccurs="1" maxOccurs="unbounded" />
                 </xs:sequence>
             </xs:complexType>

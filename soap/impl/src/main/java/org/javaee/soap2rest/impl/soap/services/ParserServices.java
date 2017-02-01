@@ -2,7 +2,7 @@ package org.javaee.soap2rest.impl.soap.services;
 
 import org.javaee.soap2rest.api.rest.model.RestResponse;
 import org.javaee.soap2rest.impl.generated.ds.ws.*;
-import org.javaee.soap2rest.utils.services.JsonService;
+import org.javaee.soap2rest.utils.services.JsonServices;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -18,7 +18,7 @@ import java.util.Optional;
 public class ParserServices {
 
     @Inject
-    private JsonService jsonService;
+    private JsonServices jsonServices;
 
     public boolean isAsync(DSRequest dsRequest) {
         return new Boolean(dsRequest.getBody().getAsyncronousResponse());
@@ -99,7 +99,7 @@ public class ParserServices {
     }
 
     public RestResponse getRestResponse(String httpResponse) throws IOException {
-        return (RestResponse) jsonService.jsonToObject(httpResponse, RestResponse.class);
+        return (RestResponse) jsonServices.jsonToObject(httpResponse, RestResponse.class);
     }
 
 }

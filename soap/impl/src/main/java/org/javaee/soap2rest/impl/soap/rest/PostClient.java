@@ -20,6 +20,7 @@ import java.util.concurrent.TimeoutException;
  */
 @Dependent
 public class PostClient {
+
     private final Logger log = LoggerFactory.getLogger(PostClient.class);
 
     private static final Long TIMEOUT = 10L;

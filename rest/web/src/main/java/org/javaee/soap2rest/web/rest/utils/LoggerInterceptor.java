@@ -17,6 +17,7 @@ import javax.ws.rs.core.Response;
 import java.io.Serializable;
 
 public class LoggerInterceptor implements Serializable {
+
     private static final Logger log = LoggerFactory.getLogger(LoggerInterceptor.class);
     
     private static final long serialVersionUID = -2230122751970854554L;
@@ -41,6 +42,9 @@ public class LoggerInterceptor implements Serializable {
 
         // before a method invocation
         Object proceedObject = invocationContext.proceed();
+        if (proceedObject == null) { // it means we work in Async mode
+            return invocationContext;
+        }
         // after a method invocation
         Response response = (Response) proceedObject;
 

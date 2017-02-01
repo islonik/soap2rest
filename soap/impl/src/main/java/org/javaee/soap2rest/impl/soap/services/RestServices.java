@@ -6,7 +6,7 @@ import org.javaee.soap2rest.impl.generated.ds.ws.DSResponse;
 import org.javaee.soap2rest.impl.soap.model.AuthUser;
 import org.javaee.soap2rest.impl.soap.rest.PostClient;
 import org.javaee.soap2rest.impl.soap.rest.PutClient;
-import org.javaee.soap2rest.utils.services.JsonService;
+import org.javaee.soap2rest.utils.services.JsonServices;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.spi.CDI;
@@ -23,7 +23,7 @@ import java.util.concurrent.TimeoutException;
 public class RestServices {
 
     @Inject
-    private JsonService jsonService;
+    private JsonServices jsonServices;
 
     @Inject
     private DbAuthServices dbAuthServices;
@@ -35,12 +35,13 @@ public class RestServices {
 
         AuthUser user = dbAuthServices.getUser();
 
-        String url = String.format("%s/notify", postClient.getRestHost());
+        String url = String.format("%s/sync/response", postClient.getRestHost());
 
-        String postResponse = postClient.send(user.getUser(), user.getPass(), url, Entity.json(jsonService.objectToJson(map)));
+        String postResponse = postClient.send(user.getUser(), user.getPass(), url, Entity.json(jsonServices.objectToJson(map)));
 
         return postResponse;
     }
+
 
     public String sendResponse(DSResponse dsResponse)
             throws JsonProcessingException, InterruptedException, ExecutionException, TimeoutException {
@@ -49,7 +50,7 @@ public class RestServices {
 
         AuthUser user = dbAuthServices.getUser();
 
-        String url = String.format("%s/response", putClient.getRestHost());
+        String url = String.format("%s/async/notify", putClient.getRestHost());
 
         AsyncRestRequest asyncRestRequest = new AsyncRestRequest();
         asyncRestRequest.setMessageId(dsResponse.getHeader().getMessageId());
@@ -57,7 +58,7 @@ public class RestServices {
         asyncRestRequest.setCode(dsResponse.getBody().getServiceOrderStatus().getStatusType().getCode());
         asyncRestRequest.setDesc(dsResponse.getBody().getServiceOrderStatus().getStatusType().getDesc());
 
-        String postResponse = putClient.send(user.getUser(), user.getPass(), url, Entity.json(jsonService.objectToJson(asyncRestRequest)));
+        String postResponse = putClient.send(user.getUser(), user.getPass(), url, Entity.json(jsonServices.objectToJson(asyncRestRequest)));
 
         return postResponse;
     }

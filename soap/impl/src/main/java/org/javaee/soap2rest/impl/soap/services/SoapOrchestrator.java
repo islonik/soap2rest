@@ -5,7 +5,7 @@ import org.javaee.soap2rest.api.rest.model.RestResponse;
 import org.javaee.soap2rest.impl.generated.ds.ws.DSRequest;
 import org.javaee.soap2rest.impl.generated.ds.ws.DSResponse;
 import org.javaee.soap2rest.impl.generated.ds.ws.KeyValuesType;
-import org.javaee.soap2rest.utils.services.JsonService;
+import org.javaee.soap2rest.utils.services.JsonServices;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,7 +33,7 @@ public class SoapOrchestrator {
     private RestServices restServices;
 
     @Inject
-    private JsonService jsonService;
+    private JsonServices jsonServices;
 
     public DSResponse syncProcess(DSRequest dsRequest) {
         return process(dsRequest);
@@ -64,7 +64,7 @@ public class SoapOrchestrator {
             String httpResponse = restServices.sendNotifyRequest(mapBody);
 
             // parse http post response
-            if (jsonService.isJson(httpResponse)) { // json
+            if (jsonServices.isJson(httpResponse)) { // json
 
                 RestResponse restResponse = parserServices.getRestResponse(httpResponse);
                 if (restResponse.getError() != null) {

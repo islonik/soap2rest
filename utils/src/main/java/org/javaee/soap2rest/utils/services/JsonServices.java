@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.util.function.Supplier;
 
 @ApplicationScoped
-public class JsonService {
+public class JsonServices {
 
     private static final ObjectMapper mapper = ((Supplier<ObjectMapper>) () -> {
         ObjectMapper mapper = new ObjectMapper();

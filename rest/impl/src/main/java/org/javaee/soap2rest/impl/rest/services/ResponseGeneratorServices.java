@@ -3,7 +3,7 @@ package org.javaee.soap2rest.impl.rest.services;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.javaee.soap2rest.api.rest.model.ErrorType;
 import org.javaee.soap2rest.api.rest.model.RestResponse;
-import org.javaee.soap2rest.utils.services.JsonService;
+import org.javaee.soap2rest.utils.services.JsonServices;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,8 +19,10 @@ public class ResponseGeneratorServices {
 
     private static final Logger log = LoggerFactory.getLogger(ResponseGeneratorServices.class);
 
+    public static final String TIMEOUT_MESSAGE = "Gateway timeout";
+
     @Inject
-    private JsonService jsonService;
+    private JsonServices jsonServices;
 
     public String getErrorResponse(String code, String message) {
         RestResponse restResponse = new RestResponse();
@@ -29,7 +31,7 @@ public class ResponseGeneratorServices {
         errorType.setMessage(message);
         restResponse.setError(errorType);
         try {
-            return jsonService.objectToJson(restResponse);
+            return jsonServices.objectToJson(restResponse);
         } catch (JsonProcessingException e) {
             log.error(e.getMessage(), e);
             return getSimpleJsonError(e);
@@ -91,10 +93,10 @@ public class ResponseGeneratorServices {
 
                 restResponse.setError(error);
 
-                return jsonService.objectToJson(restResponse);
+                return jsonServices.objectToJson(restResponse);
             }
             restResponse.setStatus("SUCCESS");
-            return jsonService.objectToJson(restResponse);
+            return jsonServices.objectToJson(restResponse);
         } catch (JsonProcessingException e) {
             log.error(e.getMessage(), e);
             return getSimpleJsonError(e);
