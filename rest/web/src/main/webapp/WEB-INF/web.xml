@@ -5,7 +5,7 @@
 
     <context-param>
         <param-name>resteasy.providers</param-name>
-        <param-value>org.javaee.soap2rest.web.rest.utils.EjbExceptionHandler</param-value>
+        <param-value>org.javaee.soap2rest.rest.web.utils.EjbExceptionHandler</param-value>
     </context-param>
 
     <security-constraint>
