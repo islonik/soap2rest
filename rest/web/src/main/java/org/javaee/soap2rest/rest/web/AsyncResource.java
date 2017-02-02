@@ -54,6 +54,27 @@ public class AsyncResource {
     @Resource(name = WildFlyConfigs.REST_EXECUTOR)
     private ExecutorService executor;
 
+    @GET
+    @Produces({MediaType.APPLICATION_JSON})
+    @Path("{subResources:.*}")
+    public Response getAbort() {
+        return Response
+                .ok(responseGeneratorServices.getSimpleJsonError(
+                        Integer.toString(HttpURLConnection.HTTP_BAD_REQUEST),
+                        "Resource doesn't exist")
+                )
+                .build();
+    }
+
+    @GET
+    @Produces({MediaType.APPLICATION_JSON})
+    @Path("/about")
+    public Response getAbout() {
+        return Response
+                .ok("Async Realm v1\n")
+                .build();
+    }
+
     private void setUpTimeout(final AsyncResponse asyncResponse, long timeout) {
         asyncResponse.setTimeout(timeout, TimeUnit.MILLISECONDS);
         asyncResponse.setTimeoutHandler(
@@ -66,7 +87,7 @@ public class AsyncResource {
         );
     }
 
-    public void asyncExecute(final ExecutorService executor, final AsyncResponse asyncResponse, final Supplier<Response> supplier) {
+    private void asyncExecute(final ExecutorService executor, final AsyncResponse asyncResponse, final Supplier<Response> supplier) {
         CompletableFuture
             .supplyAsync(supplier, executor)
             .thenApply(response -> asyncResponse.resume(response))

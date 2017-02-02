@@ -14,6 +14,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.net.HttpURLConnection;
 import java.util.Map;
 
 /**
@@ -30,6 +31,27 @@ public class SyncResource {
 
     @Inject
     private ResponseGeneratorServices responseGeneratorServices;
+
+    @GET
+    @Produces({MediaType.APPLICATION_JSON})
+    @Path("{subResources:.*}")
+    public Response getAbort() {
+        return Response
+                .ok(responseGeneratorServices.getSimpleJsonError(
+                        Integer.toString(HttpURLConnection.HTTP_BAD_REQUEST),
+                        "Resource doesn't exist")
+                )
+                .build();
+    }
+
+    @GET
+    @Produces({MediaType.APPLICATION_JSON})
+    @Path("/about")
+    public Response getAbout() {
+        return Response
+                .ok("Sync Realm v1\n")
+                .build();
+    }
 
     /**
 
