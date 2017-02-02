@@ -2,7 +2,7 @@ package org.javaee.soap2rest.soap.impl.services;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.javaee.soap2rest.rest.api.model.AsyncRestRequest;
-import org.javaee.soap2rest.impl.generated.ds.ws.DSResponse;
+import org.javaee.soap2rest.soap.impl.generated.ds.ws.DSResponse;
 import org.javaee.soap2rest.soap.impl.model.AuthUser;
 import org.javaee.soap2rest.soap.impl.rest.PostClient;
 import org.javaee.soap2rest.soap.impl.rest.PutClient;

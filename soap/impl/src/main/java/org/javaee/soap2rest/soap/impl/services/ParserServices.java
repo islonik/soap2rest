@@ -1,7 +1,7 @@
 package org.javaee.soap2rest.soap.impl.services;
 
 import org.javaee.soap2rest.rest.api.model.RestResponse;
-import org.javaee.soap2rest.impl.generated.ds.ws.*;
+import org.javaee.soap2rest.soap.impl.generated.ds.ws.*;
 import org.javaee.soap2rest.utils.services.JsonServices;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -60,7 +60,7 @@ public class ParserServices {
     // should be Zulu time
     // 2016-07-25T05:28:38.218Z
     public String getTimestamp() {
-        ZonedDateTime now = ZonedDateTime.now( ZoneOffset.UTC );
+        ZonedDateTime now = ZonedDateTime.now(ZoneOffset.UTC);
         return now.toString();
     }
 

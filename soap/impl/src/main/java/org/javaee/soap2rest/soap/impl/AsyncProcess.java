@@ -1,6 +1,6 @@
 package org.javaee.soap2rest.soap.impl;
 
-import org.javaee.soap2rest.impl.generated.ds.ws.DSRequest;
+import org.javaee.soap2rest.soap.impl.generated.ds.ws.DSRequest;
 import org.javaee.soap2rest.soap.impl.services.SoapOrchestrator;
 
 /**

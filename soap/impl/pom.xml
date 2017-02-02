@@ -53,7 +53,7 @@
                             </wsdlFiles>
                             <sourceDestDir>${project.build.directory}/generated-sources</sourceDestDir>
                             <destDir>${project.build.directory}/generated-sources</destDir>
-                            <packageName>org.javaee.soap2rest.impl.generated.ds.ws</packageName>
+                            <packageName>org.javaee.soap2rest.soap.impl.generated.ds.ws</packageName>
                             <bindingFiles>
                                 <bindingFile>${basedir}/src/main/resources/bindings.xjb</bindingFile>
                             </bindingFiles>

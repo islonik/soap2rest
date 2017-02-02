@@ -1,9 +1,9 @@
 package org.javaee.soap2rest.soap.web;
 
-import org.javaee.soap2rest.impl.generated.ds.ws.DSRequest;
-import org.javaee.soap2rest.impl.generated.ds.ws.DSResponse;
-import org.javaee.soap2rest.impl.generated.ds.ws.HandleRequestPortType;
 import org.javaee.soap2rest.soap.impl.AsyncProcess;
+import org.javaee.soap2rest.soap.impl.generated.ds.ws.DSRequest;
+import org.javaee.soap2rest.soap.impl.generated.ds.ws.DSResponse;
+import org.javaee.soap2rest.soap.impl.generated.ds.ws.HandleRequestPortType;
 import org.javaee.soap2rest.soap.impl.services.ParserServices;
 import org.javaee.soap2rest.soap.impl.services.SoapOrchestrator;
 import org.slf4j.Logger;
@@ -30,7 +30,7 @@ import java.util.concurrent.ExecutorService;
         targetNamespace = "http://nikilipa.org/Service/DeliverService/v01/DeliverServiceWS",
         portName = "DeliverServiceWS_Port",
         name = "DeliverServiceWS",
-        endpointInterface = "org.javaee.soap2rest.impl.generated.ds.ws.HandleRequestPortType"
+        endpointInterface = "org.javaee.soap2rest.soap.impl.generated.ds.ws.HandleRequestPortType"
 )
 public class SoapWebService implements HandleRequestPortType {
 
