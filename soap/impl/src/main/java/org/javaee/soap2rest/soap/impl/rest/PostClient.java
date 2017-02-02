@@ -51,7 +51,7 @@ public class PostClient {
         // For Jersey 2.x use
         String result = response.readEntity(String.class);
 
-        log.info("Post response from S2R.rest\n" + result);
+        log.info(String.format("POST response from S2R.rest:%n%s", result));
 
         jaxrsClient.close();
 

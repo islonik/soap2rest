@@ -20,7 +20,7 @@ import java.util.concurrent.TimeoutException;
  */
 @Dependent
 public class PutClient {
-    private final Logger log = LoggerFactory.getLogger(PostClient.class);
+    private final Logger log = LoggerFactory.getLogger(PutClient.class);
 
     private static final Long TIMEOUT = 10L;
 
@@ -38,7 +38,7 @@ public class PutClient {
                 new Authenticator(user, pass)
         );
 
-        log.info(String.format("Put request to S2R.rest:%n%s%n%s", endpoint, body.getEntity()));
+        log.info(String.format("PUT request to S2R.rest:%n%s%n%s", endpoint, body.getEntity()));
 
         Response response = jaxrsClient
                 .target(endpoint)
@@ -50,7 +50,7 @@ public class PutClient {
         // For Jersey 2.x use
         String result = response.readEntity(String.class);
 
-        log.info("Put response from S2R.rest:\n" + result);
+        log.info(String.format("PUT response from S2R.rest:%n%s", result));
 
         jaxrsClient.close();
 
