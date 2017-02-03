@@ -5,25 +5,21 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>org.javaee.soap2rest</groupId>
         <artifactId>rest</artifactId>
+        <groupId>org.spring.soap2rest</groupId>
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <groupId>org.javaee.soap2rest.rest</groupId>
+    <groupId>org.spring.soap2rest.rest</groupId>
     <artifactId>web</artifactId>
-    <packaging>war</packaging>
 
     <dependencies>
         <dependency>
-            <groupId>org.javaee.soap2rest.rest</groupId>
+            <groupId>org.spring.soap2rest.rest</groupId>
             <artifactId>impl</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>
 
-    <build>
-        <finalName>s2r-rest</finalName>
-    </build>
 
 </project>
