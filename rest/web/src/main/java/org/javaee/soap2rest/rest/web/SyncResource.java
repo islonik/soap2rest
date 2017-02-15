@@ -55,25 +55,75 @@ public class SyncResource {
 
     /**
 
+     curl -X GET http://localhost:8078/soap2rest/rest/v1/sync/response --user restadmin:restadmin
+
+     */
+
+    // http://localhost:8078/soap2rest/rest/v1/sync/response
+    @GET
+    @Path("/response")
+    @Consumes({MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
+    @RolesAllowed(RestRoles.REST_ROLE)
+    @Interceptors(LoggerInterceptor.class)
+    public Response getResponse(
+            @Context HttpServletRequest httpRequest) {// LoggerInterceptor
+
+        log.warn(String.format("Sync GET request was accepted."));
+        return Response
+                .ok()
+                .entity(responseGeneratorServices.getRandomResponse())
+                .build();
+    }
+
+    /**
+
+     curl -X PUT http://localhost:8078/soap2rest/rest/v1/sync/response --user restadmin:restadmin
+
+     */
+
+    // http://localhost:8078/soap2rest/rest/v1/sync/response
+    @PUT
+    @Path("/response")
+    @Consumes({MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
+    @RolesAllowed(RestRoles.REST_ROLE)
+    @Interceptors(LoggerInterceptor.class)
+    public Response putResponse(
+            @Context HttpServletRequest httpRequest, // LoggerInterceptor
+            Map<String, String> object) {
+        log.warn(String.format("Sync PUT request was accepted. Map content = %s", object.toString()));
+
+        return Response
+                .ok()
+                .entity(responseGeneratorServices.getRandomResponse())
+                .build();
+    }
+
+    /**
+
      curl -X POST -H "Content-Type: application/json" -d '{
         "test44" : "test55"
      }' http://localhost:8078/soap2rest/rest/v1/sync/response --user restadmin:restadmin
 
      */
 
-    // http://localhost:8080/soap2rest/rest/v1/sync/response
+    // http://localhost:8078/soap2rest/rest/v1/sync/response
     @POST
     @Path("/response")
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
     @RolesAllowed(RestRoles.REST_ROLE)
     @Interceptors(LoggerInterceptor.class)
-    public Response response(
+    public Response postResponse(
             @Context HttpServletRequest httpRequest, // LoggerInterceptor
             Map<String, String> object) {
+        log.warn(String.format("Sync POST request was accepted. Map content = %s", object.toString()));
 
-        log.warn(String.format("Sync request was accepted. Map content = %s", object.toString()));
-        return Response.ok().entity(responseGeneratorServices.getRandomResponse()).build();
+        return Response
+                .ok()
+                .entity(responseGeneratorServices.getRandomResponse())
+                .build();
     }
 
 }

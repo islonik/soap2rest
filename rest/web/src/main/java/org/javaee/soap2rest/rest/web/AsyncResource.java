@@ -102,6 +102,34 @@ public class AsyncResource {
 
     /**
 
+     curl -X GET http://localhost:8078/soap2rest/rest/v1/async/response --user restadmin:restadmin
+
+     */
+
+    // http://localhost:8078/soap2rest/rest/v1/async/response
+    @GET
+    @Path("/response")
+    @Consumes({MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
+    @RolesAllowed(RestRoles.REST_ROLE)
+    @Interceptors(LoggerInterceptor.class)
+    public void getResponse(
+            @Context HttpServletRequest httpRequest, // LoggerInterceptor
+            @Suspended final AsyncResponse asyncResponse) {
+        setUpTimeout(asyncResponse, TIMEOUT);
+
+        asyncExecute(executor, asyncResponse, () -> {
+            log.warn(String.format("Async GET request was accepted."));
+
+            return Response
+                    .ok()
+                    .entity(responseGeneratorServices.getRandomResponse())
+                    .build();
+        });
+    }
+
+    /**
+
      curl -X PUT -H "Content-Type: application/json" -d '{
      "messageId" : "test11",
      "conversationId" : "test22",

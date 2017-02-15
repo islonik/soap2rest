@@ -1,16 +1,18 @@
 package org.javaee.soap2rest.soap.web;
 
 import org.javaee.soap2rest.soap.impl.AsyncProcess;
+import org.javaee.soap2rest.soap.impl.CamelManager;
+import org.javaee.soap2rest.soap.impl.WildFlyResources;
 import org.javaee.soap2rest.soap.impl.generated.ds.ws.DSRequest;
 import org.javaee.soap2rest.soap.impl.generated.ds.ws.DSResponse;
 import org.javaee.soap2rest.soap.impl.generated.ds.ws.HandleRequestPortType;
 import org.javaee.soap2rest.soap.impl.services.ParserServices;
-import org.javaee.soap2rest.soap.impl.services.SoapOrchestrator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Resource;
 import javax.annotation.security.RolesAllowed;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.jws.WebParam;
 import javax.jws.WebService;
@@ -32,6 +34,7 @@ import java.util.concurrent.ExecutorService;
         name = "DeliverServiceWS",
         endpointInterface = "org.javaee.soap2rest.soap.impl.generated.ds.ws.HandleRequestPortType"
 )
+@ApplicationScoped
 public class SoapWebService implements HandleRequestPortType {
 
     private final Logger log = LoggerFactory.getLogger(SoapWebService.class);
@@ -43,12 +46,12 @@ public class SoapWebService implements HandleRequestPortType {
     private ParserServices parserServices;
 
     @Inject
-    private SoapOrchestrator soapOrchestrator;
+    private CamelManager camelManager;
 
-    @Resource(name = WildFlyConfigs.SOAP_EXECUTOR)
+    @Resource(name = WildFlyResources.SOAP_EXECUTOR)
     private ExecutorService executor;
 
-    // http://localhost:8080/soap2rest/soap/v1/DeliverServiceWS
+    // http://localhost:8078/soap2rest/soap/v1/DeliverServiceWS
     @Override
     @RolesAllowed(SoapRoles.SOAP_ROLE)
     public DSResponse handleRequest(
@@ -56,7 +59,7 @@ public class SoapWebService implements HandleRequestPortType {
                     DSRequest dsRequest) {
 
         MessageContext mc = wsContext.getMessageContext();
-        HttpServletRequest httpRequest = (HttpServletRequest)mc.get(MessageContext.SERVLET_REQUEST);
+        HttpServletRequest httpRequest = (HttpServletRequest) mc.get(MessageContext.SERVLET_REQUEST);
 
         log.info(String.format(
                 "%nWe accepted SOAP request! Request url = %s, Client Address = %s, Client Host = %s, Client Port = %s, User = %s",
@@ -70,10 +73,10 @@ public class SoapWebService implements HandleRequestPortType {
         parserServices.setUpDsRequest(dsRequest);
 
         if (parserServices.isAsync(dsRequest)) {
-            executor.execute(new AsyncProcess(soapOrchestrator, dsRequest));
+            executor.execute(new AsyncProcess(camelManager, dsRequest));
             return parserServices.getAckDSResponse(dsRequest);
         }
 
-        return soapOrchestrator.syncProcess(dsRequest);
+        return camelManager.syncProcess(dsRequest);
     }
 }

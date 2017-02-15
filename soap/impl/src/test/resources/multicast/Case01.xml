@@ -1,0 +1,27 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+                  xmlns:v01="http://www.nikilipa.org/SoapServiceRequest/v01"
+                  xmlns:v011="http://www.nikilipa.org/Common/MessageHeader/v01">
+    <soapenv:Header/>
+    <soapenv:Body>
+        <v01:DSRequest>
+            <v01:Header>
+                <!--Optional:-->
+                <v011:messageId>multicast-message-case01</v011:messageId>
+                <!--Optional:-->
+                <v011:conversationId>multicast-conversation-case01</v011:conversationId>
+            </v01:Header>
+            <v01:Body>
+                <v01:ServiceOrder>
+                    <v01:ServiceOrderID>OrderMulticast01</v01:ServiceOrderID>
+                    <v01:ServiceName>Multicast</v01:ServiceName>
+                    <!--1 or more repetitions:-->
+                    <v01:Params>
+                        <v011:key>MODE</v011:key>
+                        <v011:value>NEW</v011:value>
+                    </v01:Params>
+                </v01:ServiceOrder>
+                <v01:AsyncronousResponse>FALSE</v01:AsyncronousResponse>
+            </v01:Body>
+        </v01:DSRequest>
+    </soapenv:Body>
+</soapenv:Envelope>

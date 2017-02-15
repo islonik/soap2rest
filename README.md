@@ -66,3 +66,11 @@ mvn clean install && cp soap/web/target/s2r-soap.war /home/nikilipa/Apps/WildFly
 
 2) SoapUI could help you to send some SOAP-requests to SOAP endpoint.
  
+
+### Services in SOAP part
+Multicast
+Sync
+Async
+
+
+ 

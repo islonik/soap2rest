@@ -1,0 +1,1 @@
+mvn clean install && cp rest/web/target/s2r-rest.war /home/nikilipa/Apps/WildFly/10.1.0.Final/standalone/deployments && cp soap/web/target/s2r-soap.war /home/nikilipa/Apps/WildFly/10.1.0.Final/standalone/deployments

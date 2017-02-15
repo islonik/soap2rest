@@ -1,20 +1,23 @@
 package org.javaee.soap2rest.soap.impl.services;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.javaee.soap2rest.rest.api.model.AsyncRestRequest;
-import org.javaee.soap2rest.soap.impl.generated.ds.ws.DSResponse;
+import org.javaee.soap2rest.rest.api.model.RestResponse;
+import org.javaee.soap2rest.soap.impl.generated.ds.ws.ServiceOrderStatus;
 import org.javaee.soap2rest.soap.impl.model.AuthUser;
+import org.javaee.soap2rest.soap.impl.model.Service;
+import org.javaee.soap2rest.soap.impl.rest.ChangeClient;
+import org.javaee.soap2rest.soap.impl.rest.GetClient;
 import org.javaee.soap2rest.soap.impl.rest.PostClient;
 import org.javaee.soap2rest.soap.impl.rest.PutClient;
+import org.javaee.soap2rest.utils.properties.S2RProperty;
 import org.javaee.soap2rest.utils.services.JsonServices;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.spi.CDI;
 import javax.inject.Inject;
 import javax.ws.rs.client.Entity;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeoutException;
+import java.io.IOException;
+import java.util.Optional;
 
 /**
  * Created by nikilipa on 8/13/16.
@@ -23,43 +26,120 @@ import java.util.concurrent.TimeoutException;
 public class RestServices {
 
     @Inject
+    @S2RProperty("s2r.rest.host")
+    private String restHost;
+
+    @Inject
+    private GetClient getClient;
+
+    @Inject
+    private PutClient putClient;
+
+    @Inject
+    private PostClient postClient;
+
+    @Inject
     private JsonServices jsonServices;
+
+    @Inject
+    private ParserServices parserServices;
 
     @Inject
     private DbAuthServices dbAuthServices;
 
-    public String sendNotifyRequest(Map<String, String> map)
-            throws JsonProcessingException, InterruptedException, ExecutionException, TimeoutException {
-
-        PostClient postClient = CDI.current().select(PostClient.class).get();
-
-        AuthUser user = dbAuthServices.getUser();
-
-        String url = String.format("%s/sync/response", postClient.getRestHost());
-
-        String postResponse = postClient.send(user.getUser(), user.getPass(), url, Entity.json(jsonServices.objectToJson(map)));
-
-        return postResponse;
+    public void setRestHost(String restHost) {
+        this.restHost = restHost;
     }
 
+    public void setGetClient(GetClient getClient) {
+        this.getClient = getClient;
+    }
 
-    public String sendResponse(DSResponse dsResponse)
-            throws JsonProcessingException, InterruptedException, ExecutionException, TimeoutException {
+    public void setPutClient(PutClient putClient) {
+        this.putClient = putClient;
+    }
 
-        PutClient putClient = CDI.current().select(PutClient.class).get();
+    public void setPostClient(PostClient postClient) {
+        this.postClient = postClient;
+    }
 
+    public void setJsonServices(JsonServices jsonServices) {
+        this.jsonServices = jsonServices;
+    }
+
+    public void setParserServices(ParserServices parserServices) {
+        this.parserServices = parserServices;
+    }
+
+    public void setDbAuthServices(DbAuthServices dbAuthServices) {
+        this.dbAuthServices = dbAuthServices;
+    }
+
+    public String path2Rest() {
+        return restHost;
+    }
+
+    public ServiceOrderStatus sendGetRequest(Service service, String urlTemplate) {
+        try {
+
+            AuthUser user = dbAuthServices.getUser();
+
+            String url = String.format(urlTemplate, path2Rest());
+
+            String getResponse = getClient.get(user.getUser(), user.getPass(), url);
+
+            return parseHttpResponse(getResponse);
+        } catch (IOException ioe) {
+            return parserServices.createServiceOrderStatus(ParserServices.CODE_BUG, ioe.getMessage());
+        }
+    }
+
+    public ServiceOrderStatus sendPostRequest(Service service, String urlTemplate, String body) {
+        // PostClient postClient = CDI.current().select(PostClient.class).get();
         AuthUser user = dbAuthServices.getUser();
+        return sendChange(postClient, user, urlTemplate, body);
+    }
 
-        String url = String.format("%s/async/notify", putClient.getRestHost());
+    public ServiceOrderStatus sendPutRequest(Service service, String urlTemplate, String body) {
+        // PutClient putClient = CDI.current().select(PutClient.class).get();
+        AuthUser user = dbAuthServices.getUser();
+        return sendChange(putClient, user, urlTemplate, body);
+    }
 
-        AsyncRestRequest asyncRestRequest = new AsyncRestRequest();
-        asyncRestRequest.setMessageId(dsResponse.getHeader().getMessageId());
-        asyncRestRequest.setConversationId(dsResponse.getHeader().getConversationId());
-        asyncRestRequest.setCode(dsResponse.getBody().getServiceOrderStatus().getStatusType().getCode());
-        asyncRestRequest.setDesc(dsResponse.getBody().getServiceOrderStatus().getStatusType().getDesc());
+    private ServiceOrderStatus sendChange(ChangeClient client, AuthUser user, String urlTemplate, String body) {
+        try {
+            String url = String.format(urlTemplate, path2Rest());
 
-        String postResponse = putClient.send(user.getUser(), user.getPass(), url, Entity.json(jsonServices.objectToJson(asyncRestRequest)));
+            String putResponse = client.send(user.getUser(), user.getPass(), url, Entity.json(body));
 
-        return postResponse;
+            return parseHttpResponse(putResponse);
+        } catch (IOException ioe) {
+            return parserServices.createServiceOrderStatus(ParserServices.CODE_BUG, ioe.getMessage());
+        }
+    }
+
+    private ServiceOrderStatus parseHttpResponse(String httpResponse) throws IOException {
+        String code;
+        String message;
+        if (jsonServices.isJson(httpResponse)) { // json
+            RestResponse restResponse = jsonServices.jsonToObject(httpResponse, RestResponse.class);
+            if (restResponse.getError() != null) {
+                code = restResponse.getError().getCode();
+                message = restResponse.getError().getMessage();
+            } else {
+                code = ParserServices.CODE_OK;
+                message = ParserServices.MESSAGE_SUCCESS;
+            }
+        } else { // html code
+            Optional<String> htmlError = parserServices.getHtmlBodyContent(httpResponse);
+            if (htmlError.isPresent()) {
+                code = ParserServices.CODE_BAD;
+                message = htmlError.get();
+            } else {
+                code = ParserServices.CODE_BUG;
+                message = httpResponse;
+            }
+        }
+        return parserServices.createServiceOrderStatus(code, message);
     }
 }

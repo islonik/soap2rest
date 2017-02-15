@@ -1,52 +1,34 @@
 package org.javaee.soap2rest.soap.impl.rest;
 
-import org.javaee.soap2rest.utils.properties.S2RProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.enterprise.context.Dependent;
-import javax.inject.Inject;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 /**
  * Created by nikilipa on 8/13/16.
  */
 @Dependent
-public class PostClient {
+public class PostClient implements ChangeClient {
 
     private final Logger log = LoggerFactory.getLogger(PostClient.class);
 
-    private static final Long TIMEOUT = 10L;
-
-    @Inject
-    @S2RProperty("s2r.rest.host")
-    private String restHost;
-
-    public String getRestHost() {
-        return restHost;
-    }
-
-    public String send(String user, String pass, String endpoint, Entity body)
-            throws InterruptedException, ExecutionException, TimeoutException {
+    public String send(String user, String pass, String endpoint, Entity body) {
         Client jaxrsClient = ClientBuilder.newClient().register(
                 new Authenticator(user, pass)
         );
 
-        log.info(String.format("Post request to S2R.rest:%n%s%n%s", endpoint, body.getEntity()));
+        log.info(String.format("POST request to S2R.rest:%n%s%n%s", endpoint, body.getEntity()));
 
         Response response = jaxrsClient
                 .target(endpoint)
                 .request(MediaType.APPLICATION_JSON)
-                .async()
-                .post(body)
-                .get(TIMEOUT, TimeUnit.SECONDS);
+                .post(body);
 
         // For Jersey 2.x use
         String result = response.readEntity(String.class);
