@@ -11,7 +11,7 @@
     </parent>
 
     <groupId>org.javaee.soap2rest.rest</groupId>
-    <artifactId>impl</artifactId>
+    <artifactId>rest-impl</artifactId>
 
     <dependencies>
         <dependency>

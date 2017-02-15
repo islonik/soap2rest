@@ -11,7 +11,7 @@
     </parent>
 
     <groupId>org.javaee.soap2rest.rest</groupId>
-    <artifactId>web</artifactId>
+    <artifactId>rest-web</artifactId>
     <packaging>war</packaging>
 
     <dependencies>

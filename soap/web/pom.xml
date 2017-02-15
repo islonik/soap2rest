@@ -11,13 +11,13 @@
     </parent>
 
     <groupId>org.javaee.soap2rest.soap</groupId>
-    <artifactId>web</artifactId>
+    <artifactId>soap-web</artifactId>
     <packaging>war</packaging>
 
     <dependencies>
         <dependency>
             <groupId>org.javaee.soap2rest.soap</groupId>
-            <artifactId>impl</artifactId>
+            <artifactId>soap-impl</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>
