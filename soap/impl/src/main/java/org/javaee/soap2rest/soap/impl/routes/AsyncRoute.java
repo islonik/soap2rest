@@ -23,9 +23,9 @@ public class AsyncRoute extends RouteBuilder {
 
     @Override
     public void configure() {
-        /*onException(Exception.class)
+        onException(Exception.class)
                 .handled(true)
-                .to(ExceptionRoute.ROUTE_EXCEPTION);*/
+                .to(ExceptionRoute.ROUTE_EXCEPTION);
 
         from(ASYNC_ROUTE_NAME)
                 .routeId(ASYNC_ROUTE_NAME)

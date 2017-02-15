@@ -51,7 +51,7 @@ public class AsyncResource {
     @Inject
     private ResponseGeneratorServices responseGeneratorServices;
 
-    @Resource(name = WildFlyConfigs.REST_EXECUTOR)
+    @Resource(name = WildFlyResources.REST_EXECUTOR)
     private ExecutorService executor;
 
     @GET
