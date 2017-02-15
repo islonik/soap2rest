@@ -99,7 +99,7 @@ public class ParserServices {
     }
 
     public RestResponse getRestResponse(String httpResponse) throws IOException {
-        return (RestResponse) jsonServices.jsonToObject(httpResponse, RestResponse.class);
+        return jsonServices.jsonToObject(httpResponse, RestResponse.class);
     }
 
 }
