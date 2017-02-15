@@ -21,7 +21,7 @@
         </dependency>
         <dependency>
             <groupId>org.javaee.soap2rest.rest</groupId>
-            <artifactId>api</artifactId>
+            <artifactId>rest-api</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>

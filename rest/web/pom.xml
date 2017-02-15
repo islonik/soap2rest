@@ -17,7 +17,7 @@
     <dependencies>
         <dependency>
             <groupId>org.javaee.soap2rest.rest</groupId>
-            <artifactId>impl</artifactId>
+            <artifactId>rest-impl</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>
