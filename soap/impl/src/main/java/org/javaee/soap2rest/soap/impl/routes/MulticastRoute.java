@@ -10,6 +10,8 @@ import org.javaee.soap2rest.soap.impl.services.ParserServices;
 import org.javaee.soap2rest.soap.impl.services.RestServices;
 import org.javaee.soap2rest.soap.impl.services.RouteServices;
 import org.javaee.soap2rest.utils.services.JsonServices;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -22,6 +24,8 @@ import java.util.function.Supplier;
  * Created by nikilipa on 2/15/17.
  */
 public class MulticastRoute extends RouteBuilder {
+
+    private final Logger log = LoggerFactory.getLogger(MulticastRoute.class);
 
     private static final String MULTICAST_ROUTE_NAME = RouteServices.valueOf(RouteServices.MULTICAST);
     private static final String MULTICAST_SWITCH = "direct:MulticastSwitch";
@@ -132,6 +136,13 @@ public class MulticastRoute extends RouteBuilder {
             ServiceOrderStatus sosPut = exchange.getIn().getHeader(JSON_PUT, ServiceOrderStatus.class);
             ServiceOrderStatus sosPost = exchange.getIn().getHeader(JSON_POST, ServiceOrderStatus.class);
 
+            long startTime = Long.parseLong(service.getOptional(START_WORK));
+            long endTime = System.currentTimeMillis();
+            log.info(String.format(
+                    "Performance measure: 3 sync (get, put, post) requests were executed in parallel for %s milliseconds",
+                    (endTime - startTime)
+            ));
+
             if (!sosGet.getStatusType().getCode().equals(ParserServices.CODE_OK)) {
                 exchange.getOut().setBody(sosGet);
             } else if (!sosPut.getStatusType().getCode().equals(ParserServices.CODE_OK)) {
@@ -141,13 +152,6 @@ public class MulticastRoute extends RouteBuilder {
             } else {
                 exchange.getOut().setBody(sosGet); // could be any
             }
-            // post execution
-            long startTime = Long.parseLong(service.getOptional(START_WORK));
-            long endTime = System.currentTimeMillis();
-            log.info(String.format(
-                    "Performance measure: 3 sync (get, put, post) requests were executed in parallel for %s milliseconds",
-                    (endTime - startTime)
-            ));
         });
     }
 

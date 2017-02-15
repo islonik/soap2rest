@@ -28,7 +28,6 @@ public class S2RAggregationStrategy implements AggregationStrategy {
 
         for (String key : keys) {
             oldExchange = handle(oldExchange, newExchange, key);
-            oldExchange = handle(oldExchange, oldExchange, key);
         }
 
         return oldExchange;
@@ -37,7 +36,7 @@ public class S2RAggregationStrategy implements AggregationStrategy {
     private Exchange handle(Exchange returnExchange, Exchange check, String key) {
         Optional<Object> value = Optional.ofNullable(check.getIn().getHeader(key));
         if (value.isPresent()) {
-            returnExchange.getOut().setHeader(key, value.get());
+            returnExchange.getIn().setHeader(key, value.get());
         }
         return returnExchange;
     }
