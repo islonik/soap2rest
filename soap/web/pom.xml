@@ -11,12 +11,12 @@
     </parent>
 
     <groupId>org.spring.soap2rest.soap</groupId>
-    <artifactId>web</artifactId>
+    <artifactId>soap-web</artifactId>
 
     <dependencies>
         <dependency>
             <groupId>org.spring.soap2rest.soap</groupId>
-            <artifactId>impl</artifactId>
+            <artifactId>soap-impl</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
