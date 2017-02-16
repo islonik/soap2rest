@@ -4,6 +4,8 @@ JavaEE: security, soap, rest.
 
 SOAP part works here as a Strangler Application pattern. 
 
+Apache Camel in SOAP part.
+
 ### WildFly configuration
 How to setup these applications in WildFly (8.2.1.Final, 10.0.0.Final, 10.1.0.Final versions are tested):
 

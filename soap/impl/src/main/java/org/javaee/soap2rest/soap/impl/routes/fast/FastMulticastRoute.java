@@ -1,11 +1,13 @@
-package org.javaee.soap2rest.soap.impl.routes;
+package org.javaee.soap2rest.soap.impl.routes.fast;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.javaee.soap2rest.soap.impl.S2RAggregationStrategy;
 import org.javaee.soap2rest.soap.impl.WildFlyResources;
+import org.javaee.soap2rest.soap.impl.camel.S2RAggregationStrategy;
 import org.javaee.soap2rest.soap.impl.generated.ds.ws.ServiceOrderStatus;
 import org.javaee.soap2rest.soap.impl.logic.MulticastLogic;
 import org.javaee.soap2rest.soap.impl.model.Service;
+import org.javaee.soap2rest.soap.impl.model.ServiceType;
+import org.javaee.soap2rest.soap.impl.routes.ExceptionRoute;
 import org.javaee.soap2rest.soap.impl.services.ParserServices;
 import org.javaee.soap2rest.soap.impl.services.RestServices;
 import org.javaee.soap2rest.soap.impl.services.RouteServices;
@@ -23,29 +25,29 @@ import java.util.function.Supplier;
 /**
  * Created by nikilipa on 2/15/17.
  */
-public class MulticastRoute extends RouteBuilder {
+public class FastMulticastRoute extends RouteBuilder {
 
-    private final Logger log = LoggerFactory.getLogger(MulticastRoute.class);
+    private final Logger log = LoggerFactory.getLogger(FastMulticastRoute.class);
 
-    private static final String MULTICAST_ROUTE_NAME = RouteServices.valueOf(RouteServices.MULTICAST);
-    private static final String MULTICAST_SWITCH = "direct:MulticastSwitch";
-    private static final String MULTICAST_SYNC = "direct:MulticastSync";
+    private static final String MULTICAST_ROUTE_NAME = RouteServices.valueOf(ServiceType.FAST, RouteServices.MULTICAST);
+    private static final String MULTICAST_SWITCH = "direct:FastMulticastSwitch";
+    private static final String MULTICAST_SYNC = "direct:FastMulticastSync";
 
-    private static final String MULTICAST_GET = "direct:MulticastGet";
-    private static final String MULTICAST_PUT = "direct:MulticastPut";
-    private static final String MULTICAST_POST = "direct:MulticastPost";
+    private static final String MULTICAST_GET_1 = "direct:FastMulticastGet1";
+    private static final String MULTICAST_GET_2 = "direct:FastMulticastGet2";
+    private static final String MULTICAST_GET_3 = "direct:FastMulticastGet3";
 
-    private static final String JSON_GET = "JSON_GET";
-    private static final String JSON_PUT = "JSON_PUT";
-    private static final String JSON_POST = "JSON_POST";
+    private static final String JSON_GET_1 = "JSON_GET";
+    private static final String JSON_GET_2 = "JSON_GET";
+    private static final String JSON_GET_3 = "JSON_PUT";
 
     private static final String START_WORK = "START_WORK";
 
     private static final Set<String> keys = ((Supplier<Set<String>>) () -> {
         Set<String> keys = new HashSet<>();
-        keys.add(JSON_GET);
-        keys.add(JSON_PUT);
-        keys.add(JSON_POST);
+        keys.add(JSON_GET_1);
+        keys.add(JSON_GET_2);
+        keys.add(JSON_GET_3);
         return keys;
     }).get();
 
@@ -99,59 +101,53 @@ public class MulticastRoute extends RouteBuilder {
                 .stopOnException()
                 .parallelProcessing()
                 .to(
-                        MULTICAST_GET,
-                        MULTICAST_PUT,
-                        MULTICAST_POST
+                        MULTICAST_GET_1,
+                        MULTICAST_GET_2,
+                        MULTICAST_GET_3
                 ).end()
                 .to(MULTICAST_SYNC);
 
-        from(MULTICAST_GET).routeId(MULTICAST_GET).process(exchange -> {
+        from(MULTICAST_GET_1).routeId(MULTICAST_GET_1).process(exchange -> {
             exchange.getIn()
                     .setHeader(
-                            JSON_GET,
+                            JSON_GET_1,
                             multicastLogic.executeGet(exchange.getIn().getBody(Service.class))
                     );
         });
 
-        from(MULTICAST_PUT).routeId(MULTICAST_PUT).process(exchange -> {
+        from(MULTICAST_GET_2).routeId(MULTICAST_GET_2).process(exchange -> {
             exchange.getIn()
                     .setHeader(
-                            JSON_PUT,
-                            multicastLogic.executePut(exchange.getIn().getBody(Service.class))
+                            JSON_GET_2,
+                            multicastLogic.executeGet(exchange.getIn().getBody(Service.class))
                     );
         });
 
-        from(MULTICAST_POST).routeId(MULTICAST_POST).process(exchange -> {
+        from(MULTICAST_GET_3).routeId(MULTICAST_GET_3).process(exchange -> {
             exchange.getIn()
                     .setHeader(
-                            JSON_POST,
-                            multicastLogic.executePost(exchange.getIn().getBody(Service.class))
+                            JSON_GET_3,
+                            multicastLogic.executeGet(exchange.getIn().getBody(Service.class))
                     );
         });
 
         from(MULTICAST_SYNC).routeId(MULTICAST_SYNC).process(exchange -> {
             Service service = exchange.getIn().getBody(Service.class);
 
-            ServiceOrderStatus sosGet = exchange.getIn().getHeader(JSON_GET, ServiceOrderStatus.class);
-            ServiceOrderStatus sosPut = exchange.getIn().getHeader(JSON_PUT, ServiceOrderStatus.class);
-            ServiceOrderStatus sosPost = exchange.getIn().getHeader(JSON_POST, ServiceOrderStatus.class);
+            ServiceOrderStatus sosGet1 = exchange.getIn().getHeader(JSON_GET_1, ServiceOrderStatus.class);
+            ServiceOrderStatus sosGet2 = exchange.getIn().getHeader(JSON_GET_2, ServiceOrderStatus.class);
+            ServiceOrderStatus sosGet3 = exchange.getIn().getHeader(JSON_GET_3, ServiceOrderStatus.class);
 
             long startTime = Long.parseLong(service.getOptional(START_WORK));
             long endTime = System.currentTimeMillis();
-            log.info(String.format(
-                    "Performance measure: 3 sync (get, put, post) requests were executed in parallel for %s milliseconds",
+            String performanceMeasure = String.format(
+                    "Performance fast measure: 3 sync (get) requests were executed in parallel for %s milliseconds",
                     (endTime - startTime)
-            ));
+            );
+            log.info(performanceMeasure);
 
-            if (!sosGet.getStatusType().getCode().equals(ParserServices.CODE_OK)) {
-                exchange.getOut().setBody(sosGet);
-            } else if (!sosPut.getStatusType().getCode().equals(ParserServices.CODE_OK)) {
-                exchange.getOut().setBody(sosPut);
-            } else if (!sosPost.getStatusType().getCode().equals(ParserServices.CODE_OK)) {
-                exchange.getOut().setBody(sosPost);
-            } else {
-                exchange.getOut().setBody(sosGet); // could be any
-            }
+            ServiceOrderStatus outSos = multicastLogic.chooseBetweenEntities(service, performanceMeasure, sosGet1, sosGet2, sosGet3);
+            exchange.getOut().setBody(outSos);
         });
     }
 

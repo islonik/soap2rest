@@ -1,4 +1,4 @@
-package org.javaee.soap2rest.soap.impl;
+package org.javaee.soap2rest.soap.impl.camel;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.processor.aggregate.AggregationStrategy;

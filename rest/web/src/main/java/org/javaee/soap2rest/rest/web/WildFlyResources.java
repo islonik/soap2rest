@@ -1,10 +1,21 @@
 package org.javaee.soap2rest.rest.web;
 
+import javax.annotation.Resource;
+import javax.enterprise.context.ApplicationScoped;
+import java.util.concurrent.ExecutorService;
+
 /**
  * Created by nikilipa on 2/1/17.
  */
-public interface WildFlyResources {
+@ApplicationScoped
+public class WildFlyResources {
 
-    String REST_EXECUTOR = "java:/s2r/threads/executors/rest";
+    public static final String REST_EXECUTOR = "java:/s2r/threads/executors/rest";
 
+    @Resource(name = WildFlyResources.REST_EXECUTOR)
+    private ExecutorService executor;
+
+    public ExecutorService getExecutor() {
+        return executor;
+    }
 }

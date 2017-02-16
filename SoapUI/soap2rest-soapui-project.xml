@@ -116,11 +116,12 @@
          <v01:Body>
             <v01:ServiceOrder>
                <v01:ServiceOrderID>Order-Multicast</v01:ServiceOrderID>
-               <v01:ServiceName>Multicast</v01:ServiceName>
+               <v01:ServiceName>Async</v01:ServiceName>
+               <v01:ServiceType>Fast</v01:ServiceType>
                <!--1 or more repetitions:-->
                <v01:Params>
-                  <v011:key>test44</v011:key>
-                  <v011:value>test55</v011:value>
+                  <v011:key>PerformanceTime:Execution</v011:key>
+                  <v011:value>TRUE</v011:value>
                </v01:Params>
             </v01:ServiceOrder>
             <v01:AsyncronousResponse>FALSE</v01:AsyncronousResponse>
@@ -141,10 +142,11 @@
             <v01:ServiceOrder>
                <v01:ServiceOrderID>Order-Sync</v01:ServiceOrderID>
                <v01:ServiceName>Sync</v01:ServiceName>
+               <v01:ServiceType>Fast</v01:ServiceType>
                <!--1 or more repetitions:-->
                <v01:Params>
-                  <v011:key>test44</v011:key>
-                  <v011:value>test55</v011:value>
+                  <v011:key>PerformanceTime:Execution</v011:key>
+                  <v011:value>TRUE</v011:value>
                </v01:Params>
             </v01:ServiceOrder>
             <v01:AsyncronousResponse>FALSE</v01:AsyncronousResponse>
@@ -165,10 +167,11 @@
             <v01:ServiceOrder>
                <v01:ServiceOrderID>Order-Async</v01:ServiceOrderID>
                <v01:ServiceName>Async</v01:ServiceName>
+               <v01:ServiceType>Fast</v01:ServiceType>
                <!--1 or more repetitions:-->
                <v01:Params>
-                  <v011:key>test44</v011:key>
-                  <v011:value>test55</v011:value>
+                  <v011:key>PerformanceTime:Execution</v011:key>
+                  <v011:value>TRUE</v011:value>
                </v01:Params>
             </v01:ServiceOrder>
             <v01:AsyncronousResponse>TRUE</v01:AsyncronousResponse>

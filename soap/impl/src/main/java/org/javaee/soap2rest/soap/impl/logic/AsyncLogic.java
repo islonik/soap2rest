@@ -17,7 +17,49 @@ public class AsyncLogic extends AbstractLogic {
     private final Logger log = LoggerFactory.getLogger(AsyncLogic.class);
 
     @Override
-    public ServiceOrderStatus invoke(Service service) {
+    public ServiceOrderStatus fast(Service service) {
+        long startTime = System.currentTimeMillis();
+
+        ServiceOrderStatus sos = restServices.sendGetRequest(service, "%s/async/response");
+
+        long endTime = System.currentTimeMillis();
+
+        String result = String.format(
+                "Performance fast measure: 1 async get requests was executed in %s milliseconds",
+                (endTime - startTime)
+        );
+        log.info(result);
+        setUpPerformanceMetrics(service, sos, result);
+
+        return sos;
+    }
+
+    @Override
+    public ServiceOrderStatus medium(Service service) {
+        long startTime = System.currentTimeMillis();
+
+        // 1 request
+        ServiceOrderStatus sos = restServices.sendGetRequest(service, "%s/async/response");
+        if (!sos.getStatusType().getCode().equals(ParserServices.CODE_OK)) {
+            return sos;
+        }
+        // 2 request
+        sos = restServices.sendGetRequest(service, "%s/async/response");
+
+        long endTime = System.currentTimeMillis();
+
+        String result = String.format(
+                "Performance medium measure: 2 async get requests were executed in %s milliseconds",
+                (endTime - startTime)
+        );
+        log.info(result);
+        setUpPerformanceMetrics(service, sos, result);
+
+        return sos;
+    }
+
+    @Override
+    public ServiceOrderStatus slow(Service service) {
         long startTime = System.currentTimeMillis();
 
         // 1 request
@@ -34,10 +76,12 @@ public class AsyncLogic extends AbstractLogic {
         sos = restServices.sendGetRequest(service, "%s/async/response");
         long endTime = System.currentTimeMillis();
 
-        log.info(String.format(
-                "Performance measure: 3 async get requests were executed in %s milliseconds",
+        String result = String.format(
+                "Performance slow measure: 3 async get requests were executed in %s milliseconds",
                 (endTime - startTime)
-        ));
+        );
+        log.info(result);
+        setUpPerformanceMetrics(service, sos, result);
 
         return sos;
     }

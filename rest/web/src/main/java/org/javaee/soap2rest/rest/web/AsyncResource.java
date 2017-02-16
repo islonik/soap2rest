@@ -8,7 +8,6 @@ import org.javaee.soap2rest.rest.web.utils.LoggerInterceptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Resource;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -24,7 +23,6 @@ import javax.ws.rs.core.Response;
 import java.net.HttpURLConnection;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
@@ -51,8 +49,8 @@ public class AsyncResource {
     @Inject
     private ResponseGeneratorServices responseGeneratorServices;
 
-    @Resource(name = WildFlyResources.REST_EXECUTOR)
-    private ExecutorService executor;
+    @Inject
+    private WildFlyResources wildFlyResources;
 
     @GET
     @Produces({MediaType.APPLICATION_JSON})
@@ -87,9 +85,9 @@ public class AsyncResource {
         );
     }
 
-    private void asyncExecute(final ExecutorService executor, final AsyncResponse asyncResponse, final Supplier<Response> supplier) {
+    private void asyncExecute(final AsyncResponse asyncResponse, final Supplier<Response> supplier) {
         CompletableFuture
-            .supplyAsync(supplier, executor)
+            .supplyAsync(supplier, wildFlyResources.getExecutor())
             .thenApply(response -> asyncResponse.resume(response))
             .exceptionally(throwable ->
                 asyncResponse.resume(
@@ -118,7 +116,7 @@ public class AsyncResource {
             @Suspended final AsyncResponse asyncResponse) {
         setUpTimeout(asyncResponse, TIMEOUT);
 
-        asyncExecute(executor, asyncResponse, () -> {
+        asyncExecute(asyncResponse, () -> {
             log.warn(String.format("Async GET request was accepted."));
 
             return Response
@@ -152,7 +150,7 @@ public class AsyncResource {
 
         setUpTimeout(asyncResponse, TIMEOUT);
 
-        asyncExecute(executor, asyncResponse, () -> {
+        asyncExecute(asyncResponse, () -> {
             log.warn(String.format("Async request was accepted. %s", asyncRestRequest.toString()));
 
             Optional<Response> validResponse = validationServices.validAsyncRestRequest(asyncRestRequest);

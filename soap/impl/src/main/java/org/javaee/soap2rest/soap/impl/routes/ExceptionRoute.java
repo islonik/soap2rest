@@ -29,7 +29,7 @@ public class ExceptionRoute extends RouteBuilder {
             if (object instanceof Service) {
                 service = exchange.getIn().getBody(Service.class);
 
-                log.warn(String.format("Service %s was interrupted by %s", service.toString(), e.getMessage()));
+                log.warn(String.format("Service '%s' was interrupted by %s", service.toString(), e.getMessage()));
             }
 
             exchange.getIn().setBody(response);

@@ -3,9 +3,10 @@ package org.javaee.soap2rest.soap.impl;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.javaee.soap2rest.rest.api.model.RestResponse;
+import org.javaee.soap2rest.soap.impl.camel.CamelStarter;
 import org.javaee.soap2rest.soap.impl.generated.ds.ws.DSRequest;
 import org.javaee.soap2rest.soap.impl.generated.ds.ws.DSResponse;
+import org.javaee.soap2rest.soap.impl.generated.ds.ws.ServiceOrderStatus;
 import org.javaee.soap2rest.soap.impl.logic.AsyncLogic;
 import org.javaee.soap2rest.soap.impl.logic.MulticastLogic;
 import org.javaee.soap2rest.soap.impl.logic.SyncLogic;
@@ -13,10 +14,16 @@ import org.javaee.soap2rest.soap.impl.model.AuthUser;
 import org.javaee.soap2rest.soap.impl.rest.GetClient;
 import org.javaee.soap2rest.soap.impl.rest.PostClient;
 import org.javaee.soap2rest.soap.impl.rest.PutClient;
-import org.javaee.soap2rest.soap.impl.routes.AsyncRoute;
+import org.javaee.soap2rest.soap.impl.routes.fast.FastAsyncRoute;
+import org.javaee.soap2rest.soap.impl.routes.fast.FastMulticastRoute;
+import org.javaee.soap2rest.soap.impl.routes.fast.FastSyncRoute;
+import org.javaee.soap2rest.soap.impl.routes.medium.MediumAsyncRoute;
+import org.javaee.soap2rest.soap.impl.routes.medium.MediumMulticastRoute;
+import org.javaee.soap2rest.soap.impl.routes.medium.MediumSyncRoute;
+import org.javaee.soap2rest.soap.impl.routes.slow.SlowAsyncRoute;
 import org.javaee.soap2rest.soap.impl.routes.ExceptionRoute;
-import org.javaee.soap2rest.soap.impl.routes.MulticastRoute;
-import org.javaee.soap2rest.soap.impl.routes.SyncRoute;
+import org.javaee.soap2rest.soap.impl.routes.slow.SlowMulticastRoute;
+import org.javaee.soap2rest.soap.impl.routes.slow.SlowSyncRoute;
 import org.javaee.soap2rest.soap.impl.services.DbAuthServices;
 import org.javaee.soap2rest.soap.impl.services.JaxbServices;
 import org.javaee.soap2rest.soap.impl.services.ParserServices;
@@ -52,6 +59,7 @@ public class CamelManagerTest extends CamelTestSupport {
         }
     }).get();
 
+    private WildFlyResources wildFlyResources;
     private CamelStarter camelStarter;
     private JsonServices jsonServices;
     private ParserServices parserServices;
@@ -66,12 +74,11 @@ public class CamelManagerTest extends CamelTestSupport {
 
     @Override
     public RoutesBuilder[] createRouteBuilders() {
+        wildFlyResources = Mockito.mock(WildFlyResources.class);
         executor = Executors.newFixedThreadPool(20);
+        Mockito.when(wildFlyResources.getExecutor()).thenReturn(executor);
 
-        this.camelStarter = new CamelStarter();
-        this.camelStarter.setCamelContext(this.context());
-        this.camelStarter.setTemplate(this.template());
-        this.camelStarter.setExecutorService(executor);
+        this.camelStarter = new CamelStarter(this.context(), this.template(), wildFlyResources);
 
         this.jsonServices = new JsonServices();
         this.parserServices = new ParserServices();
@@ -94,67 +101,77 @@ public class CamelManagerTest extends CamelTestSupport {
         this.restServices.setParserServices(parserServices);
         this.restServices.setDbAuthServices(dbAuthServices);
 
+        ExceptionRoute exceptionRoute = new ExceptionRoute();
+
+        // AsyncLogic
         AsyncLogic asyncLogic = new AsyncLogic();
         asyncLogic.setJsonServices(jsonServices);
         asyncLogic.setParserServices(parserServices);
         asyncLogic.setRestServices(restServices);
 
-        AsyncRoute asyncRoute = new AsyncRoute();
-        asyncRoute.setAsyncLogic(asyncLogic);
+        FastAsyncRoute fastAsyncRoute = new FastAsyncRoute();
+        fastAsyncRoute.setAsyncLogic(asyncLogic);
 
-        ExceptionRoute exceptionRoute = new ExceptionRoute();
+        MediumAsyncRoute mediumAsyncRoute = new MediumAsyncRoute();
+        mediumAsyncRoute.setAsyncLogic(asyncLogic);
 
+        SlowAsyncRoute slowAsyncRoute = new SlowAsyncRoute();
+        slowAsyncRoute.setAsyncLogic(asyncLogic);
+
+        // MulticastLogic
         MulticastLogic multicastLogic = new MulticastLogic();
         multicastLogic.setJsonServices(jsonServices);
         multicastLogic.setParserServices(parserServices);
         multicastLogic.setRestServices(restServices);
 
-        MulticastRoute multicastRoute = new MulticastRoute();
-        multicastRoute.setMulticastLogic(multicastLogic);
-        multicastRoute.setJsonServices(jsonServices);
-        multicastRoute.setRestServices(restServices);
-        multicastRoute.setExecutor(executor);
+        FastMulticastRoute fastMulticastRoute = new FastMulticastRoute();
+        fastMulticastRoute.setMulticastLogic(multicastLogic);
+        fastMulticastRoute.setJsonServices(jsonServices);
+        fastMulticastRoute.setRestServices(restServices);
+        fastMulticastRoute.setExecutor(executor);
 
+        MediumMulticastRoute mediumMulticastRoute = new MediumMulticastRoute();
+        mediumMulticastRoute.setMulticastLogic(multicastLogic);
+        mediumMulticastRoute.setJsonServices(jsonServices);
+        mediumMulticastRoute.setRestServices(restServices);
+        mediumMulticastRoute.setExecutor(executor);
+
+        SlowMulticastRoute slowMulticastRoute = new SlowMulticastRoute();
+        slowMulticastRoute.setMulticastLogic(multicastLogic);
+        slowMulticastRoute.setJsonServices(jsonServices);
+        slowMulticastRoute.setRestServices(restServices);
+        slowMulticastRoute.setExecutor(executor);
+
+        // SyncLogic
         SyncLogic syncLogic = new SyncLogic();
         syncLogic.setJsonServices(jsonServices);
         syncLogic.setParserServices(parserServices);
         syncLogic.setRestServices(restServices);
 
-        SyncRoute syncRoute = new SyncRoute();
-        syncRoute.setSyncLogic(syncLogic);
+        FastSyncRoute fastSyncRoute = new FastSyncRoute();
+        fastSyncRoute.setSyncLogic(syncLogic);
+
+        MediumSyncRoute mediumSyncRoute = new MediumSyncRoute();
+        mediumSyncRoute.setSyncLogic(syncLogic);
+
+        SlowSyncRoute slowSyncRoute = new SlowSyncRoute();
+        slowSyncRoute.setSyncLogic(syncLogic);
 
         return new RouteBuilder[]{
-                asyncRoute,
                 exceptionRoute,
-                multicastRoute,
-                syncRoute
+
+                fastAsyncRoute,
+                mediumAsyncRoute,
+                slowAsyncRoute,
+
+                fastMulticastRoute,
+                mediumMulticastRoute,
+                slowMulticastRoute,
+
+                fastSyncRoute,
+                mediumSyncRoute,
+                slowSyncRoute
         };
-    }
-
-    @Test
-    public void testAsyncRouteCase01() throws Exception {
-        DSRequest dsRequest = null;
-        String xmlResponse = new String(Files.readAllBytes(Paths.get("src/test/resources/async/Case01.xml")));
-        try (ByteArrayInputStream bais = new ByteArrayInputStream(xmlResponse.getBytes())) {
-            SOAPMessage message = MessageFactory.newInstance().createMessage(null, bais);
-            dsRequest = jaxbServices.getDsRequest(message);
-        }
-
-        String jsonResponse = new String(Files.readAllBytes(Paths.get("src/test/resources/responses/Ok.json")));
-
-        Mockito.when(getClient.get(Mockito.anyString(), Mockito.anyString(), Mockito.anyString()))
-                .thenReturn(jsonResponse, jsonResponse, jsonResponse);
-
-        CamelManager camelManager = new CamelManager(camelStarter, parserServices, restServices, jsonServices);
-
-        DSResponse dsResponse = camelManager.syncProcess(dsRequest);
-
-        Assert.assertNotNull(dsResponse);
-        Assert.assertEquals("async-message-case01", dsResponse.getHeader().getMessageId());
-        Assert.assertEquals("async-conversation-case01", dsResponse.getHeader().getConversationId());
-        Assert.assertEquals("OrderAsync01", dsResponse.getBody().getServiceOrderStatus().getServiceOrderID());
-        Assert.assertEquals("0", dsResponse.getBody().getServiceOrderStatus().getStatusType().getCode());
-        Assert.assertEquals("SUCCESS", dsResponse.getBody().getServiceOrderStatus().getStatusType().getDesc());
     }
 
     @Test
@@ -166,20 +183,135 @@ public class CamelManagerTest extends CamelTestSupport {
             dsRequest = jaxbServices.getDsRequest(message);
         }
 
-        CamelManager camelManager = new CamelManager(camelStarter, parserServices, restServices, jsonServices);
+        CamelManager camelManager = new CamelManager(jsonServices, parserServices, camelStarter);
 
         DSResponse dsResponse = camelManager.syncProcess(dsRequest);
 
         Assert.assertNotNull(dsResponse);
-        Assert.assertEquals("UNKNOWN-message-case01", dsResponse.getHeader().getMessageId());
-        Assert.assertEquals("UNKNOWN-conversation-case01", dsResponse.getHeader().getConversationId());
-        Assert.assertEquals("OrderUNKNOWN01", dsResponse.getBody().getServiceOrderStatus().getServiceOrderID());
+        Assert.assertEquals("unknown-message-case01", dsResponse.getHeader().getMessageId());
+        Assert.assertEquals("unknown-conversation-case01", dsResponse.getHeader().getConversationId());
+        Assert.assertEquals("OrderUnknown01", dsResponse.getBody().getServiceOrderStatus().getServiceOrderID());
         Assert.assertEquals("400", dsResponse.getBody().getServiceOrderStatus().getStatusType().getCode());
-        Assert.assertEquals("Service UNKNOWN is not implemented yet!", dsResponse.getBody().getServiceOrderStatus().getStatusType().getDesc());
+        Assert.assertEquals("Service 'Unknown' is not implemented yet!", dsResponse.getBody().getServiceOrderStatus().getStatusType().getDesc());
+    }
+
+    @Test
+    public void testExceptionRouteCase02() throws Exception {
+        DSRequest dsRequest = null;
+        String xmlResponse = new String(Files.readAllBytes(Paths.get("src/test/resources/exception/Case02.xml")));
+        try (ByteArrayInputStream bais = new ByteArrayInputStream(xmlResponse.getBytes())) {
+            SOAPMessage message = MessageFactory.newInstance().createMessage(null, bais);
+            dsRequest = jaxbServices.getDsRequest(message);
+        }
+
+        CamelManager camelManager = new CamelManager(jsonServices, parserServices, camelStarter);
+
+        DSResponse dsResponse = camelManager.syncProcess(dsRequest);
+
+        Assert.assertNotNull(dsResponse);
+        Assert.assertEquals("unknown-message-case02", dsResponse.getHeader().getMessageId());
+        Assert.assertEquals("unknown-conversation-case02", dsResponse.getHeader().getConversationId());
+        Assert.assertEquals("OrderUnknown02", dsResponse.getBody().getServiceOrderStatus().getServiceOrderID());
+        Assert.assertEquals("400", dsResponse.getBody().getServiceOrderStatus().getStatusType().getCode());
+        Assert.assertEquals("No enum constant org.javaee.soap2rest.soap.impl.model.ServiceType.UNKNOWN", dsResponse.getBody().getServiceOrderStatus().getStatusType().getDesc());
+    }
+
+    @Test
+    public void testAsyncRouteCase01() throws Exception {
+        Assert.assertTrue("slow", true);
+
+        DSRequest dsRequest = null;
+        String xmlResponse = new String(Files.readAllBytes(Paths.get("src/test/resources/async/Case01.xml")));
+        try (ByteArrayInputStream bais = new ByteArrayInputStream(xmlResponse.getBytes())) {
+            SOAPMessage message = MessageFactory.newInstance().createMessage(null, bais);
+            dsRequest = jaxbServices.getDsRequest(message);
+        }
+
+        String jsonResponse = new String(Files.readAllBytes(Paths.get("src/test/resources/responses/Ok.json")));
+
+        Mockito.when(getClient.get(Mockito.anyString(), Mockito.anyString(), Mockito.anyString()))
+                .thenReturn(jsonResponse);
+
+        CamelManager camelManager = new CamelManager(jsonServices, parserServices, camelStarter);
+
+        DSResponse dsResponse = camelManager.syncProcess(dsRequest);
+
+        Assert.assertNotNull(dsResponse);
+        Assert.assertEquals("async-message-case01", dsResponse.getHeader().getMessageId());
+        Assert.assertEquals("async-conversation-case01", dsResponse.getHeader().getConversationId());
+
+        ServiceOrderStatus sos = dsResponse.getBody().getServiceOrderStatus();
+        Assert.assertEquals("OrderAsync01", sos.getServiceOrderID());
+        Assert.assertEquals("0", sos.getStatusType().getCode());
+        Assert.assertEquals("SUCCESS", sos.getStatusType().getDesc());
+        Assert.assertTrue(sos.getStatusType().getResult().startsWith("Performance fast measure:"));
+    }
+
+    @Test
+    public void testAsyncRouteCase02() throws Exception {
+        Assert.assertTrue("medium", true);
+
+        DSRequest dsRequest = null;
+        String xmlResponse = new String(Files.readAllBytes(Paths.get("src/test/resources/async/Case02.xml")));
+        try (ByteArrayInputStream bais = new ByteArrayInputStream(xmlResponse.getBytes())) {
+            SOAPMessage message = MessageFactory.newInstance().createMessage(null, bais);
+            dsRequest = jaxbServices.getDsRequest(message);
+        }
+
+        String jsonResponse = new String(Files.readAllBytes(Paths.get("src/test/resources/responses/Ok.json")));
+
+        Mockito.when(getClient.get(Mockito.anyString(), Mockito.anyString(), Mockito.anyString()))
+                .thenReturn(jsonResponse, jsonResponse);
+
+        CamelManager camelManager = new CamelManager(jsonServices, parserServices, camelStarter);
+
+        DSResponse dsResponse = camelManager.syncProcess(dsRequest);
+
+        Assert.assertNotNull(dsResponse);
+        Assert.assertEquals("async-message-case02", dsResponse.getHeader().getMessageId());
+        Assert.assertEquals("async-conversation-case02", dsResponse.getHeader().getConversationId());
+
+        ServiceOrderStatus sos = dsResponse.getBody().getServiceOrderStatus();
+        Assert.assertEquals("OrderAsync02", sos.getServiceOrderID());
+        Assert.assertEquals("0", sos.getStatusType().getCode());
+        Assert.assertEquals("SUCCESS", sos.getStatusType().getDesc());
+        Assert.assertTrue(sos.getStatusType().getResult().startsWith("Performance medium measure:"));
+    }
+
+    @Test
+    public void testAsyncRouteCase03() throws Exception {
+        Assert.assertTrue("fast", true);
+
+        DSRequest dsRequest = null;
+        String xmlResponse = new String(Files.readAllBytes(Paths.get("src/test/resources/async/Case03.xml")));
+        try (ByteArrayInputStream bais = new ByteArrayInputStream(xmlResponse.getBytes())) {
+            SOAPMessage message = MessageFactory.newInstance().createMessage(null, bais);
+            dsRequest = jaxbServices.getDsRequest(message);
+        }
+
+        String jsonResponse = new String(Files.readAllBytes(Paths.get("src/test/resources/responses/Ok.json")));
+
+        Mockito.when(getClient.get(Mockito.anyString(), Mockito.anyString(), Mockito.anyString()))
+                .thenReturn(jsonResponse, jsonResponse, jsonResponse);
+
+        CamelManager camelManager = new CamelManager(jsonServices, parserServices, camelStarter);
+
+        DSResponse dsResponse = camelManager.syncProcess(dsRequest);
+
+        Assert.assertNotNull(dsResponse);
+        Assert.assertEquals("async-message-case03", dsResponse.getHeader().getMessageId());
+        Assert.assertEquals("async-conversation-case03", dsResponse.getHeader().getConversationId());
+        ServiceOrderStatus sos = dsResponse.getBody().getServiceOrderStatus();
+        Assert.assertEquals("OrderAsync03", sos.getServiceOrderID());
+        Assert.assertEquals("0", sos.getStatusType().getCode());
+        Assert.assertEquals("SUCCESS", sos.getStatusType().getDesc());
+        Assert.assertTrue(sos.getStatusType().getResult().startsWith("Performance slow measure:"));
     }
 
     @Test
     public void testMulticastRouteCase01() throws Exception {
+        Assert.assertTrue("fast", true);
+
         DSRequest dsRequest = null;
         String xmlResponse = new String(Files.readAllBytes(Paths.get("src/test/resources/multicast/Case01.xml")));
         try (ByteArrayInputStream bais = new ByteArrayInputStream(xmlResponse.getBytes())) {
@@ -196,20 +328,95 @@ public class CamelManagerTest extends CamelTestSupport {
         Mockito.when(postClient.send(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.any()))
                 .thenReturn(jsonResponse);
 
-        CamelManager camelManager = new CamelManager(camelStarter, parserServices, restServices, jsonServices);
+        CamelManager camelManager = new CamelManager(jsonServices, parserServices, camelStarter);
 
         DSResponse dsResponse = camelManager.syncProcess(dsRequest);
 
         Assert.assertNotNull(dsResponse);
         Assert.assertEquals("multicast-message-case01", dsResponse.getHeader().getMessageId());
         Assert.assertEquals("multicast-conversation-case01", dsResponse.getHeader().getConversationId());
-        Assert.assertEquals("OrderMulticast01", dsResponse.getBody().getServiceOrderStatus().getServiceOrderID());
-        Assert.assertEquals("0", dsResponse.getBody().getServiceOrderStatus().getStatusType().getCode());
-        Assert.assertEquals("SUCCESS", dsResponse.getBody().getServiceOrderStatus().getStatusType().getDesc());
+
+        ServiceOrderStatus sos = dsResponse.getBody().getServiceOrderStatus();
+        Assert.assertEquals("OrderMulticast01", sos.getServiceOrderID());
+        Assert.assertEquals("0", sos.getStatusType().getCode());
+        Assert.assertEquals("SUCCESS", sos.getStatusType().getDesc());
+        Assert.assertTrue(sos.getStatusType().getResult().startsWith("Performance fast measure:"));
+    }
+
+    @Test
+    public void testMulticastRouteCase02() throws Exception {
+        Assert.assertTrue("medium", true);
+
+        DSRequest dsRequest = null;
+        String xmlResponse = new String(Files.readAllBytes(Paths.get("src/test/resources/multicast/Case02.xml")));
+        try (ByteArrayInputStream bais = new ByteArrayInputStream(xmlResponse.getBytes())) {
+            SOAPMessage message = MessageFactory.newInstance().createMessage(null, bais);
+            dsRequest = jaxbServices.getDsRequest(message);
+        }
+
+        String jsonResponse = new String(Files.readAllBytes(Paths.get("src/test/resources/responses/Ok.json")));
+
+        Mockito.when(getClient.get(Mockito.anyString(), Mockito.anyString(), Mockito.anyString()))
+                .thenReturn(jsonResponse);
+        Mockito.when(putClient.send(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.any()))
+                .thenReturn(jsonResponse);
+        Mockito.when(postClient.send(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.any()))
+                .thenReturn(jsonResponse);
+
+        CamelManager camelManager = new CamelManager(jsonServices, parserServices, camelStarter);
+
+        DSResponse dsResponse = camelManager.syncProcess(dsRequest);
+
+        Assert.assertNotNull(dsResponse);
+        Assert.assertEquals("multicast-message-case02", dsResponse.getHeader().getMessageId());
+        Assert.assertEquals("multicast-conversation-case02", dsResponse.getHeader().getConversationId());
+
+        ServiceOrderStatus sos = dsResponse.getBody().getServiceOrderStatus();
+        Assert.assertEquals("OrderMulticast02", sos.getServiceOrderID());
+        Assert.assertEquals("0", sos.getStatusType().getCode());
+        Assert.assertEquals("SUCCESS", sos.getStatusType().getDesc());
+        Assert.assertTrue(sos.getStatusType().getResult().startsWith("Performance medium measure:"));
+    }
+
+    @Test
+    public void testMulticastRouteCase03() throws Exception {
+        Assert.assertTrue("slow", true);
+
+        DSRequest dsRequest = null;
+        String xmlResponse = new String(Files.readAllBytes(Paths.get("src/test/resources/multicast/Case03.xml")));
+        try (ByteArrayInputStream bais = new ByteArrayInputStream(xmlResponse.getBytes())) {
+            SOAPMessage message = MessageFactory.newInstance().createMessage(null, bais);
+            dsRequest = jaxbServices.getDsRequest(message);
+        }
+
+        String jsonResponse = new String(Files.readAllBytes(Paths.get("src/test/resources/responses/Ok.json")));
+
+        Mockito.when(getClient.get(Mockito.anyString(), Mockito.anyString(), Mockito.anyString()))
+                .thenReturn(jsonResponse);
+        Mockito.when(putClient.send(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.any()))
+                .thenReturn(jsonResponse);
+        Mockito.when(postClient.send(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.any()))
+                .thenReturn(jsonResponse);
+
+        CamelManager camelManager = new CamelManager(jsonServices, parserServices, camelStarter);
+
+        DSResponse dsResponse = camelManager.syncProcess(dsRequest);
+
+        Assert.assertNotNull(dsResponse);
+        Assert.assertEquals("multicast-message-case03", dsResponse.getHeader().getMessageId());
+        Assert.assertEquals("multicast-conversation-case03", dsResponse.getHeader().getConversationId());
+
+        ServiceOrderStatus sos = dsResponse.getBody().getServiceOrderStatus();
+        Assert.assertEquals("OrderMulticast03", sos.getServiceOrderID());
+        Assert.assertEquals("0", sos.getStatusType().getCode());
+        Assert.assertEquals("SUCCESS", sos.getStatusType().getDesc());
+        Assert.assertTrue(sos.getStatusType().getResult().startsWith("Performance slow measure:"));
     }
 
     @Test
     public void testSyncRouteCase01() throws Exception {
+        Assert.assertTrue("fast", true);
+
         DSRequest dsRequest = null;
         String xmlResponse = new String(Files.readAllBytes(Paths.get("src/test/resources/sync/Case01.xml")));
         try (ByteArrayInputStream bais = new ByteArrayInputStream(xmlResponse.getBytes())) {
@@ -220,18 +427,82 @@ public class CamelManagerTest extends CamelTestSupport {
         String jsonResponse = new String(Files.readAllBytes(Paths.get("src/test/resources/responses/Ok.json")));
 
         Mockito.when(getClient.get(Mockito.anyString(), Mockito.anyString(), Mockito.anyString()))
-                .thenReturn(jsonResponse, jsonResponse, jsonResponse);
+                .thenReturn(jsonResponse);
 
-        CamelManager camelManager = new CamelManager(camelStarter, parserServices, restServices, jsonServices);
+        CamelManager camelManager = new CamelManager(jsonServices, parserServices, camelStarter);
 
         DSResponse dsResponse = camelManager.syncProcess(dsRequest);
 
         Assert.assertNotNull(dsResponse);
         Assert.assertEquals("sync-message-case01", dsResponse.getHeader().getMessageId());
         Assert.assertEquals("sync-conversation-case01", dsResponse.getHeader().getConversationId());
-        Assert.assertEquals("OrderSync01", dsResponse.getBody().getServiceOrderStatus().getServiceOrderID());
-        Assert.assertEquals("0", dsResponse.getBody().getServiceOrderStatus().getStatusType().getCode());
-        Assert.assertEquals("SUCCESS", dsResponse.getBody().getServiceOrderStatus().getStatusType().getDesc());
+        ServiceOrderStatus sos = dsResponse.getBody().getServiceOrderStatus();
+        Assert.assertEquals("OrderSync01", sos.getServiceOrderID());
+        Assert.assertEquals("0", sos.getStatusType().getCode());
+        Assert.assertEquals("SUCCESS", sos.getStatusType().getDesc());
+        Assert.assertTrue(sos.getStatusType().getResult().startsWith("Performance fast measure:"));
+    }
+
+    @Test
+    public void testSyncRouteCase02() throws Exception {
+        Assert.assertTrue("medium", true);
+
+        DSRequest dsRequest = null;
+        String xmlResponse = new String(Files.readAllBytes(Paths.get("src/test/resources/sync/Case02.xml")));
+        try (ByteArrayInputStream bais = new ByteArrayInputStream(xmlResponse.getBytes())) {
+            SOAPMessage message = MessageFactory.newInstance().createMessage(null, bais);
+            dsRequest = jaxbServices.getDsRequest(message);
+        }
+
+        String jsonResponse = new String(Files.readAllBytes(Paths.get("src/test/resources/responses/Ok.json")));
+
+        Mockito.when(getClient.get(Mockito.anyString(), Mockito.anyString(), Mockito.anyString()))
+                .thenReturn(jsonResponse, jsonResponse);
+
+        CamelManager camelManager = new CamelManager(jsonServices, parserServices, camelStarter);
+
+        DSResponse dsResponse = camelManager.syncProcess(dsRequest);
+
+        Assert.assertNotNull(dsResponse);
+        Assert.assertEquals("sync-message-case02", dsResponse.getHeader().getMessageId());
+        Assert.assertEquals("sync-conversation-case02", dsResponse.getHeader().getConversationId());
+
+        ServiceOrderStatus sos = dsResponse.getBody().getServiceOrderStatus();
+        Assert.assertEquals("OrderSync02", sos.getServiceOrderID());
+        Assert.assertEquals("0", sos.getStatusType().getCode());
+        Assert.assertEquals("SUCCESS", sos.getStatusType().getDesc());
+        Assert.assertTrue(sos.getStatusType().getResult().startsWith("Performance medium measure:"));
+    }
+
+    @Test
+    public void testSyncRouteCase03() throws Exception {
+        Assert.assertTrue("slow", true);
+
+        DSRequest dsRequest = null;
+        String xmlResponse = new String(Files.readAllBytes(Paths.get("src/test/resources/sync/Case03.xml")));
+        try (ByteArrayInputStream bais = new ByteArrayInputStream(xmlResponse.getBytes())) {
+            SOAPMessage message = MessageFactory.newInstance().createMessage(null, bais);
+            dsRequest = jaxbServices.getDsRequest(message);
+        }
+
+        String jsonResponse = new String(Files.readAllBytes(Paths.get("src/test/resources/responses/Ok.json")));
+
+        Mockito.when(getClient.get(Mockito.anyString(), Mockito.anyString(), Mockito.anyString()))
+                .thenReturn(jsonResponse, jsonResponse, jsonResponse);
+
+        CamelManager camelManager = new CamelManager(jsonServices, parserServices, camelStarter);
+
+        DSResponse dsResponse = camelManager.syncProcess(dsRequest);
+
+        Assert.assertNotNull(dsResponse);
+        Assert.assertEquals("sync-message-case03", dsResponse.getHeader().getMessageId());
+        Assert.assertEquals("sync-conversation-case03", dsResponse.getHeader().getConversationId());
+
+        ServiceOrderStatus sos = dsResponse.getBody().getServiceOrderStatus();
+        Assert.assertEquals("OrderSync03", sos.getServiceOrderID());
+        Assert.assertEquals("0", sos.getStatusType().getCode());
+        Assert.assertEquals("SUCCESS", sos.getStatusType().getDesc());
+        Assert.assertTrue(sos.getStatusType().getResult().startsWith("Performance slow measure:"));
     }
 
 }

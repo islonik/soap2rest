@@ -12,14 +12,16 @@ public class Service {
 
     private final String id;
     private final String name;
+    private final ServiceType type;
     private final String messageId;
     private final String conversationId;
     private final Map<String, String> params;
     private final ConcurrentMap<String, String> optionalParams = new ConcurrentHashMap<>();
 
-    public Service(String id, String name, String messageId, String conversationId, Map<String, String> params) {
+    public Service(String id, String name, ServiceType type, String messageId, String conversationId, Map<String, String> params) {
         this.id = id;
         this.name = name;
+        this.type = type;
         this.messageId = messageId;
         this.conversationId = conversationId;
         this.params = Collections.unmodifiableMap(params);
@@ -31,6 +33,10 @@ public class Service {
 
     public String getName() {
         return name;
+    }
+
+    public ServiceType getType() {
+        return type;
     }
 
     public String getMessageId() {
@@ -58,6 +64,7 @@ public class Service {
         return "Service{" +
                 "id='" + id + '\'' +
                 ", name='" + name + '\'' +
+                ", type='" + type + '\'' +
                 ", messageId='" + messageId + '\'' +
                 ", conversationId='" + conversationId + '\'' +
                 '}';

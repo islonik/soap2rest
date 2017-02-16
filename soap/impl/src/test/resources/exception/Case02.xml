@@ -6,15 +6,15 @@
         <v01:DSRequest>
             <v01:Header>
                 <!--Optional:-->
-                <v011:messageId>unknown-message-case01</v011:messageId>
+                <v011:messageId>unknown-message-case02</v011:messageId>
                 <!--Optional:-->
-                <v011:conversationId>unknown-conversation-case01</v011:conversationId>
+                <v011:conversationId>unknown-conversation-case02</v011:conversationId>
             </v01:Header>
             <v01:Body>
                 <v01:ServiceOrder>
-                    <v01:ServiceOrderID>OrderUnknown01</v01:ServiceOrderID>
-                    <v01:ServiceName>Unknown</v01:ServiceName>
-                    <v01:ServiceType>Slow</v01:ServiceType>
+                    <v01:ServiceOrderID>OrderUnknown02</v01:ServiceOrderID>
+                    <v01:ServiceName>Async</v01:ServiceName>
+                    <v01:ServiceType>UNKNOWN</v01:ServiceType>
                     <!--1 or more repetitions:-->
                     <v01:Params>
                         <v011:key>MODE</v011:key>

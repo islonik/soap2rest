@@ -14,10 +14,11 @@
                 <v01:ServiceOrder>
                     <v01:ServiceOrderID>OrderMulticast01</v01:ServiceOrderID>
                     <v01:ServiceName>Multicast</v01:ServiceName>
+                    <v01:ServiceType>Fast</v01:ServiceType>
                     <!--1 or more repetitions:-->
                     <v01:Params>
-                        <v011:key>MODE</v011:key>
-                        <v011:value>NEW</v011:value>
+                        <v011:key>PerformanceTime:Execution</v011:key>
+                        <v011:value>TRUE</v011:value>
                     </v01:Params>
                 </v01:ServiceOrder>
                 <v01:AsyncronousResponse>FALSE</v01:AsyncronousResponse>

@@ -1,6 +1,5 @@
 package org.javaee.soap2rest.soap.web;
 
-import org.javaee.soap2rest.soap.impl.AsyncProcess;
 import org.javaee.soap2rest.soap.impl.CamelManager;
 import org.javaee.soap2rest.soap.impl.WildFlyResources;
 import org.javaee.soap2rest.soap.impl.generated.ds.ws.DSRequest;
@@ -12,14 +11,12 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Resource;
 import javax.annotation.security.RolesAllowed;
-import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.jws.WebParam;
 import javax.jws.WebService;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
-import java.util.concurrent.ExecutorService;
 
 /**
  * Created by nikilipa on 8/12/16.
@@ -34,7 +31,6 @@ import java.util.concurrent.ExecutorService;
         name = "DeliverServiceWS",
         endpointInterface = "org.javaee.soap2rest.soap.impl.generated.ds.ws.HandleRequestPortType"
 )
-@ApplicationScoped
 public class SoapWebService implements HandleRequestPortType {
 
     private final Logger log = LoggerFactory.getLogger(SoapWebService.class);
@@ -48,15 +44,15 @@ public class SoapWebService implements HandleRequestPortType {
     @Inject
     private CamelManager camelManager;
 
-    @Resource(name = WildFlyResources.SOAP_EXECUTOR)
-    private ExecutorService executor;
+    @Inject
+    private WildFlyResources wildFlyResources;
 
     // http://localhost:8078/soap2rest/soap/v1/DeliverServiceWS
     @Override
     @RolesAllowed(SoapRoles.SOAP_ROLE)
     public DSResponse handleRequest(
             @WebParam(name = "DSRequest", targetNamespace = "http://www.nikilipa.org/SoapServiceRequest/v01", partName = "parameter")
-                    DSRequest dsRequest) {
+                    final DSRequest dsRequest) {
 
         MessageContext mc = wsContext.getMessageContext();
         HttpServletRequest httpRequest = (HttpServletRequest) mc.get(MessageContext.SERVLET_REQUEST);
@@ -73,7 +69,9 @@ public class SoapWebService implements HandleRequestPortType {
         parserServices.setUpDsRequest(dsRequest);
 
         if (parserServices.isAsync(dsRequest)) {
-            executor.execute(new AsyncProcess(camelManager, dsRequest));
+            wildFlyResources.getExecutor().execute(() -> {
+                camelManager.asyncProcess(dsRequest);
+            });
             return parserServices.getAckDSResponse(dsRequest);
         }
 

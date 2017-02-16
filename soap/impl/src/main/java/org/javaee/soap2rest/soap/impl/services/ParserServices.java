@@ -2,6 +2,7 @@ package org.javaee.soap2rest.soap.impl.services;
 
 import org.javaee.soap2rest.soap.impl.generated.ds.ws.*;
 import org.javaee.soap2rest.soap.impl.model.Service;
+import org.javaee.soap2rest.soap.impl.model.ServiceType;
 
 import javax.enterprise.context.ApplicationScoped;
 import java.time.ZoneOffset;
@@ -141,6 +142,7 @@ public class ParserServices {
         return new Service(
                 dsRequest.getBody().getServiceOrder().getServiceOrderID(),
                 dsRequest.getBody().getServiceOrder().getServiceName(),
+                ServiceType.valueOf(dsRequest.getBody().getServiceOrder()),
                 dsRequest.getHeader().getMessageId(),
                 dsRequest.getHeader().getConversationId(),
                 serviceParams
