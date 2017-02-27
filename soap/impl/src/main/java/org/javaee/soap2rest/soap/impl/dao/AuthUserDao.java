@@ -1,30 +1,30 @@
 package org.javaee.soap2rest.soap.impl.dao;
 
-import org.javaee.soap2rest.soap.impl.model.AuthUser;
+import org.javaee.soap2rest.soap.impl.model.sql.AuthUser;
+import org.javaee.soap2rest.utils.sql.DaoSupport;
 
 import javax.enterprise.context.Dependent;
-import java.util.ArrayList;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.List;
 
 /**
  * Created by nikilipa on 8/13/16.
  */
 @Dependent
-public class AuthUserDao {
+public class AuthUserDao extends DaoSupport<AuthUser> {
 
-    /**
-     * Content of db table.
-     */
-    private static final List<AuthUser> users = new ArrayList() {
-        {
-            add(new AuthUser() {{
-                setUser("restadmin");
-                setPass("restadmin");
-            }});
-        }
-    };
+    @PersistenceContext(unitName = "org.javaee.soap2rest.soap")
+    private EntityManager em;
 
-    public AuthUser getUser2Rest() {
-        return users.get(0);
+    @Override
+    public EntityManager em() {
+        return em;
     }
+
+    public List<AuthUser> findAllUsers() {
+        return em.createNamedQuery("findAllUsers", AuthUser.class)
+                .getResultList();
+    }
+
 }

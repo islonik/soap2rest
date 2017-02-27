@@ -1,0 +1,27 @@
+<databaseChangeLog
+	xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:ora="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+
+	<changeSet id="template.default_1" logicalFilePath="liquibase_template.xml" author="islonik">
+		<preConditions onError="MARK_RAN" onFail="MARK_RAN">
+			<not>
+				<sequenceExists sequenceName="ids_sequence"/>
+			</not>
+		</preConditions>
+		<createSequence sequenceName="ids_sequence" incrementBy="100" startValue="10000"/>
+	</changeSet>
+
+	<changeSet id="template.default_2" logicalFilePath="liquibase_template.xml" author="islonik">
+		<preConditions onError="MARK_RAN" onFail="MARK_RAN">
+			<sequenceExists sequenceName="ids_sequence"/>
+		</preConditions>
+		<alterSequence sequenceName="ids_sequence" incrementBy="100"/>
+	</changeSet>
+
+    %s
+
+</databaseChangeLog>

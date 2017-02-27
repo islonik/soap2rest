@@ -1,19 +1,18 @@
 package org.javaee.soap2rest.soap.impl.services;
 
-import org.javaee.soap2rest.rest.api.model.AsyncRestRequest;
 import org.javaee.soap2rest.rest.api.model.RestResponse;
 import org.javaee.soap2rest.soap.impl.generated.ds.ws.ServiceOrderStatus;
-import org.javaee.soap2rest.soap.impl.model.AuthUser;
+import org.javaee.soap2rest.soap.impl.model.sql.AuthUser;
 import org.javaee.soap2rest.soap.impl.model.Service;
 import org.javaee.soap2rest.soap.impl.rest.ChangeClient;
 import org.javaee.soap2rest.soap.impl.rest.GetClient;
 import org.javaee.soap2rest.soap.impl.rest.PostClient;
 import org.javaee.soap2rest.soap.impl.rest.PutClient;
+import org.javaee.soap2rest.soap.impl.services.sql.DbAuthServices;
 import org.javaee.soap2rest.utils.properties.S2RProperty;
 import org.javaee.soap2rest.utils.services.JsonServices;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.spi.CDI;
 import javax.inject.Inject;
 import javax.ws.rs.client.Entity;
 import java.io.IOException;
@@ -82,11 +81,11 @@ public class RestServices {
     public ServiceOrderStatus sendGetRequest(Service service, String urlTemplate) {
         try {
 
-            AuthUser user = dbAuthServices.getUser();
+            AuthUser user = dbAuthServices.getUser(service.getName());
 
             String url = String.format(urlTemplate, path2Rest());
 
-            String getResponse = getClient.get(user.getUser(), user.getPass(), url);
+            String getResponse = getClient.get(user.getUsername(), user.getPassphrase(), url);
 
             return parseHttpResponse(getResponse);
         } catch (IOException ioe) {
@@ -96,13 +95,13 @@ public class RestServices {
 
     public ServiceOrderStatus sendPostRequest(Service service, String urlTemplate, String body) {
         // PostClient postClient = CDI.current().select(PostClient.class).get();
-        AuthUser user = dbAuthServices.getUser();
+        AuthUser user = dbAuthServices.getUser(service.getName());
         return sendChange(postClient, user, urlTemplate, body);
     }
 
     public ServiceOrderStatus sendPutRequest(Service service, String urlTemplate, String body) {
         // PutClient putClient = CDI.current().select(PutClient.class).get();
-        AuthUser user = dbAuthServices.getUser();
+        AuthUser user = dbAuthServices.getUser(service.getName());
         return sendChange(putClient, user, urlTemplate, body);
     }
 
@@ -110,7 +109,7 @@ public class RestServices {
         try {
             String url = String.format(urlTemplate, path2Rest());
 
-            String putResponse = client.send(user.getUser(), user.getPass(), url, Entity.json(body));
+            String putResponse = client.send(user.getUsername(), user.getPassphrase(), url, Entity.json(body));
 
             return parseHttpResponse(putResponse);
         } catch (IOException ioe) {

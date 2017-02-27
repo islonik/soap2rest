@@ -58,6 +58,62 @@ restadmin=WEBSERVICE.SOAP2REST.REST
 ```properties
 rest.host=http://localhost:8078/soap2rest/rest/v1
 ```
+8) Put jdbc6.jar into WildFly/modules/com/oracle/ojdbc/main
+```xml
+<module xmlns="urn:jboss:module:1.3" name="com.oracle.ojdbc">
+    <resources>
+        <resource-root path="ojdbc6.jar"/>
+    </resources>
+    <dependencies>
+        <module name="javax.api"/>
+        <module name="javax.transaction.api"/>
+    </dependencies>
+</module>
+```
+
+9) add below xml to drivers
+```xml
+<driver name="oracle" module="com.oracle.ojdbc">
+    <xa-datasource-class>oracle.jdbc.xa.client.OracleXADataSource</xa-datasource-class>
+</driver>
+```
+
+10) create a datasource:
+```xml
+<xa-datasource jndi-name="java:/S2ROracle11Db" pool-name="s2rpool" enabled="true" use-ccm="false">
+    <xa-datasource-property name="URL">
+        jdbc:oracle:thin:@localhost:49161:xe
+    </xa-datasource-property>
+    <xa-datasource-class>oracle.jdbc.xa.client.OracleXADataSource</xa-datasource-class>
+    <driver>oracle</driver>
+    <xa-pool>
+        <min-pool-size>5</min-pool-size>
+        <max-pool-size>32</max-pool-size>
+        <is-same-rm-override>false</is-same-rm-override>
+        <interleaving>false</interleaving>
+        <no-tx-separate-pools>true</no-tx-separate-pools>
+        <pad-xid>false</pad-xid>
+        <wrap-xa-resource>false</wrap-xa-resource>
+    </xa-pool>
+    <security>
+        <user-name>system</user-name>
+        <password>oracle</password>
+    </security>
+    <validation>
+        <check-valid-connection-sql>select 1 from dual</check-valid-connection-sql>
+        <validate-on-match>false</validate-on-match>
+        <background-validation>true</background-validation>
+        <background-validation-millis>10000</background-validation-millis>
+    </validation>
+    <statement>
+        <share-prepared-statements>false</share-prepared-statements>
+    </statement>
+</xa-datasource>
+```
+
+
+```
+
 
 ### Working hints
 
@@ -70,9 +126,9 @@ mvn clean install && cp soap/web/target/s2r-soap.war /home/nikilipa/Apps/WildFly
  
 
 ### Services in SOAP part
-Multicast
-Sync
-Async
+1) Multicast
+2) Sync
+3) Async
 
 
  

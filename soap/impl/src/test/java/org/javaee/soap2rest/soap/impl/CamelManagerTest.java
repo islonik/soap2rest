@@ -1,16 +1,18 @@
 package org.javaee.soap2rest.soap.impl;
 
+import com.google.common.collect.Lists;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.javaee.soap2rest.soap.impl.camel.CamelStarter;
+import org.javaee.soap2rest.soap.impl.dao.AuthUserDao;
 import org.javaee.soap2rest.soap.impl.generated.ds.ws.DSRequest;
 import org.javaee.soap2rest.soap.impl.generated.ds.ws.DSResponse;
 import org.javaee.soap2rest.soap.impl.generated.ds.ws.ServiceOrderStatus;
 import org.javaee.soap2rest.soap.impl.logic.AsyncLogic;
 import org.javaee.soap2rest.soap.impl.logic.MulticastLogic;
 import org.javaee.soap2rest.soap.impl.logic.SyncLogic;
-import org.javaee.soap2rest.soap.impl.model.AuthUser;
+import org.javaee.soap2rest.soap.impl.model.sql.AuthUser;
 import org.javaee.soap2rest.soap.impl.rest.GetClient;
 import org.javaee.soap2rest.soap.impl.rest.PostClient;
 import org.javaee.soap2rest.soap.impl.rest.PutClient;
@@ -24,7 +26,7 @@ import org.javaee.soap2rest.soap.impl.routes.slow.SlowAsyncRoute;
 import org.javaee.soap2rest.soap.impl.routes.ExceptionRoute;
 import org.javaee.soap2rest.soap.impl.routes.slow.SlowMulticastRoute;
 import org.javaee.soap2rest.soap.impl.routes.slow.SlowSyncRoute;
-import org.javaee.soap2rest.soap.impl.services.DbAuthServices;
+import org.javaee.soap2rest.soap.impl.services.sql.DbAuthServices;
 import org.javaee.soap2rest.soap.impl.services.JaxbServices;
 import org.javaee.soap2rest.soap.impl.services.ParserServices;
 import org.javaee.soap2rest.soap.impl.services.RestServices;
@@ -82,11 +84,18 @@ public class CamelManagerTest extends CamelTestSupport {
 
         this.jsonServices = new JsonServices();
         this.parserServices = new ParserServices();
-        this.dbAuthServices = Mockito.mock(DbAuthServices.class);
+
+        AuthUserDao authUserDao = Mockito.mock(AuthUserDao.class);
+        this.dbAuthServices = new DbAuthServices();
+        this.dbAuthServices.setAuthUserDao(authUserDao);
+
         AuthUser authUser = new AuthUser();
-        authUser.setUser("restadmin");
-        authUser.setPass("restadmin");
-        Mockito.when(dbAuthServices.getUser()).thenReturn(authUser);
+        authUser.setService("default");
+        authUser.setUsername("restadmin");
+        authUser.setPassphrase("restadmin");
+
+        Mockito.when(authUserDao.findAllUsers()).thenReturn(Lists.newArrayList(authUser));
+        dbAuthServices.updateCache();
 
         this.getClient = Mockito.mock(GetClient.class);
         this.putClient = Mockito.mock(PutClient.class);
