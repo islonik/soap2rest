@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
 import java.nio.channels.OverlappingFileLockException;
 import java.sql.SQLException;
@@ -146,42 +147,39 @@ public class LiquibaseRunner {
 
     public static CDILiquibaseConfig doLocked(Callable<CDILiquibaseConfig> action) throws Exception {
         synchronized (jvmLockObject) {
-            log.info("SYNCHRONIZED ON : [{}]", jvmLockObject.getClass().hashCode());
+            log.info("SYNCHRONIZED ON : [{}]", jvmLockObject.hashCode());
 
+            log.info("JVM lock acquired, acquiring file lock");
+            String lockPath = String.format("%s/t2prov.liquibase.lock", ROOT_PATH);
+
+            File lockFile = new File(lockPath);
+            if (!lockFile.exists() && lockFile.createNewFile()) {
+                log.info("Created lock file [path={}]", lockPath);
+            }
+
+            log.info("Try to acquire the file lock [file={}]", lockPath);
+            CDILiquibaseConfig actionResult = null;
             FileLock lock = null;
-
-            try {
-                log.info("JVM lock acquired, acquiring file lock");
-                String lockPath = String.format("%s/t2prov.liquibase.lock", ROOT_PATH);
-
-                File lockFile = new File(lockPath);
-                if (lockFile.createNewFile()) {
-                    log.info("Created lock file [path={}]", lockPath);
-                }
-
-                log.info("Try to acquire the file lock [file={}]", lockPath);
-                while (lock == null) {
+            try (FileOutputStream fileStream = new FileOutputStream(lockPath);
+                 FileChannel fileChannel = fileStream.getChannel()) {
+                while (null == lock) {
                     try {
-                        lock = new FileOutputStream(lockPath).getChannel().tryLock();
+                        lock = fileChannel.tryLock();
                     } catch (OverlappingFileLockException e) {
                         log.debug("Lock already acquired, waiting for lock...");
                     }
-                    if (lock == null) {
-                        jvmLockObject.wait(1000);
+                    if (null == lock) {
+                        log.debug("Waiting for lock...");
+                        jvmLockObject.wait(100L);
                     }
                 }
                 log.info("File lock acquired, running liquibase");
-
-                return action.call();
-            } finally {
-                if (lock != null) {
-                    try {
-                        lock.release();
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
+                actionResult = action.call();
+                lock.release();
+            } catch (Throwable e) {
+                e.printStackTrace();
             }
+            return actionResult;
         }
     }
 
