@@ -29,5 +29,5 @@ public class ExecutionTime {
 
         return object;
     }
-    
+
 }
