@@ -25,7 +25,7 @@ import java.util.concurrent.Executors;
 @Endpoint
 public class SoapWebService implements HandleRequestPortType {
 
-    private final Logger log = LoggerFactory.getLogger(SoapWebService.class);
+    private static final Logger log = LoggerFactory.getLogger(SoapWebService.class);
 
     @Autowired
     private ParserServices parserServices;
@@ -54,6 +54,8 @@ public class SoapWebService implements HandleRequestPortType {
                 httpRequest.getRemotePort(),
                 httpRequest.getRemoteUser()
         ));*/
+
+        log.info("We got a request");
 
         parserServices.setUpDsRequest(dsRequest);
 

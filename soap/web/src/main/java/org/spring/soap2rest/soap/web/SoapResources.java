@@ -5,6 +5,6 @@ package org.spring.soap2rest.soap.web;
  */
 public interface SoapResources {
 
-    String SOAP_PATH = "/soap2rest/v1/soap/*";
+    String SOAP_PATH = "/soap2rest/soap/v1/*";
 
 }

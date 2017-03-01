@@ -51,6 +51,18 @@
                 <artifactId>spring-ws-core</artifactId>
                 <version>${spring.ws.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.springframework.ws</groupId>
+                <artifactId>spring-ws-security</artifactId>
+                <version>${spring.ws.version}</version>
+            </dependency>
+
+            <!-- to avoid this exception: java.lang.NoSuchMethodError: org.apache.xml.security.utils.I18n.init -->
+            <dependency>
+                <groupId>org.apache.santuario</groupId>
+                <artifactId>xmlsec</artifactId>
+                <version>2.0.8</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -107,6 +119,63 @@
         </pluginRepository>
     </pluginRepositories>
 
+    <!-- to execute use: mvn clean package -P findbugs -->
+    <profiles>
+        <profile>
+            <id>findbugs</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>findbugs-maven-plugin</artifactId>
+                        <version>3.0.4</version>
+                        <configuration>
+                            <!-- Build doesn't fail if problems are found -->
+                            <failOnError>false</failOnError>
+                            <!--
+                                Enables analysis which takes more memory but finds more bugs.
+                                If you run out of memory, changes the value of the effort element
+                                to 'low'.
+                            -->
+                            <effort>Max</effort>
+                            <!-- Reports all bugs (other values are medium and max) -->
+                            <threshold>Low</threshold>
+                            <!-- Produces XML report -->
+                            <xmlOutput>true</xmlOutput>
+                            <!-- Configures the directory in which the XML report is created -->
+                            <findbugsXmlOutputDirectory>${project.build.directory}/findbugs</findbugsXmlOutputDirectory>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>noFailOnError</id>
+                                <phase>test</phase>
+                                <goals>
+                                    <goal>findbugs</goal>
+                                </goals>
+                                <configuration>
+                                    <failOnError>false</failOnError>
+                                    <maxRank>20</maxRank>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>failOnError</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>check</goal>
+                                </goals>
+                                <configuration>
+                                    <failOnError>true</failOnError>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
 
 </project>

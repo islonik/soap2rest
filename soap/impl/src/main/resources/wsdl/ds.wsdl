@@ -33,6 +33,7 @@
                 <xs:sequence>
                     <xs:element name="code" type="xs:string" minOccurs="1" maxOccurs="1"/>
                     <xs:element name="desc" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                    <xs:element name="result" type="xs:string" minOccurs="0" maxOccurs="1"/>
                 </xs:sequence>
             </xs:complexType>
             
@@ -73,7 +74,8 @@
                 <xs:sequence>
                     <xs:element name="ServiceOrderID" type="xs:string"/>
                     <xs:element name="ServiceName"    type="xs:string"/>
-                    <xs:element name="Params" type="header:keyValuesType" minOccurs="1" maxOccurs="unbounded" />
+                    <xs:element name="ServiceType"    type="xs:string"/>
+                    <xs:element name="Params" type="header:keyValuesType" minOccurs="0" maxOccurs="unbounded" />
                 </xs:sequence>
             </xs:complexType>
 
