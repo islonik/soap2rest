@@ -32,12 +32,18 @@ public class SyncResource {
         return "Sync Realm!\n";
     }
 
+    // curl localhost:8079/soap2rest/v1/rest/sync/auth
+    @RequestMapping("**/auth")
+    //@Secured(RestRoles.REST_ROLE)
+    //@PreAuthorize("hasRole('ROLE_ADMIN')")
+    public String auth() {
+        return "Auth Sync Realm!\n";
+    }
+
     /**
-
-     curl -X POST -H "Content-Type: application/json" -d '{
-     "test44" : "test55"
-     }' http://localhost:8079/soap2rest/v1/rest/sync/response --user restadmin:restadmin
-
+     * curl -X POST -H "Content-Type: application/json" -d '{
+     * "test44" : "test55"
+     * }' http://localhost:8079/soap2rest/v1/rest/sync/response --user restadmin:restadmin
      */
 
     // http://localhost:8079/soap2rest/v1/rest/sync/response

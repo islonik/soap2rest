@@ -33,4 +33,34 @@
         </dependency>
     </dependencies>
 
+    <!-- to execute use: mvn clean install -P sb-soap -->
+    <profiles>
+        <profile>
+            <id>sb-soap</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-maven-plugin</artifactId>
+                        <configuration>
+                            <mainClass>org.spring.soap2rest.soap.web.Application</mainClass>
+                            <layout>ZIP</layout>
+                            <skip>false</skip>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
 </project>
