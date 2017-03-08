@@ -1,11 +1,13 @@
-package org.spring.soap2rest.rest.web;
+package org.spring.soap2rest.rest.web.rest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.spring.soap2rest.rest.impl.ResponseGeneratorServices;
+import org.spring.soap2rest.rest.web.RestResources;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -27,7 +29,8 @@ public class SyncResource {
     private ResponseGeneratorServices responseGeneratorServices;
 
     // curl localhost:8079/soap2rest/v1/rest/sync/
-    @RequestMapping("**/**")
+    @RequestMapping()
+    //@RequestMapping("**/**")
     public String about() {
         return "Sync Realm!\n";
     }
@@ -35,7 +38,7 @@ public class SyncResource {
     // curl localhost:8079/soap2rest/v1/rest/sync/auth
     @RequestMapping("**/auth")
     //@Secured(RestRoles.REST_ROLE)
-    //@PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('WEBSERVICE.SOAP2REST.REST')")
     public String auth() {
         return "Auth Sync Realm!\n";
     }

@@ -6,6 +6,7 @@ import org.spring.soap2rest.soap.impl.generated.ds.ws.DSResponse;
 import org.spring.soap2rest.soap.impl.rest.PutClient;
 import org.spring.soap2rest.utils.services.JsonServices;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -31,8 +32,13 @@ public class RestServices {
     private static final String path2rest = "http://localhost:8079/soap2rest/v1/rest";
 
     public String getResponseRequest(Map<String, String> map) {
+        RestTemplateBuilder restTemplateBuilder = new RestTemplateBuilder();
+        RestTemplate restTemplate = restTemplateBuilder
+                .rootUri(path2rest)
+                .basicAuthorization("restadmin", "restadmin")
+                .build();
+
         String uri = String.format("%s/sync/response", path2rest);
-        RestTemplate restTemplate = new RestTemplate();
         String postResponse = restTemplate.postForObject(uri, map, String.class);
 
         return postResponse;

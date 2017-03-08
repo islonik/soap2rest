@@ -1,10 +1,11 @@
-package org.spring.soap2rest.rest.web;
+package org.spring.soap2rest.rest.web.rest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.spring.soap2rest.rest.api.model.AsyncRestRequest;
 import org.spring.soap2rest.rest.impl.ResponseGeneratorServices;
 import org.spring.soap2rest.rest.impl.ValidationServices;
+import org.spring.soap2rest.rest.web.RestResources;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
