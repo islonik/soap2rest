@@ -1,8 +1,9 @@
-package org.javaee.soap2rest.rest.web;
+package org.javaee.soap2rest.rest.web.rest;
 
 import org.javaee.soap2rest.rest.api.model.AsyncRestRequest;
 import org.javaee.soap2rest.rest.impl.services.ResponseGeneratorServices;
 import org.javaee.soap2rest.rest.impl.services.ValidationServices;
+import org.javaee.soap2rest.rest.web.WildFlyResources;
 import org.javaee.soap2rest.utils.services.JsonServices;
 import org.javaee.soap2rest.rest.web.utils.LoggerInterceptor;
 import org.slf4j.Logger;
