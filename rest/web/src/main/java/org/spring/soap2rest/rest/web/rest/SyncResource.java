@@ -8,7 +8,6 @@ import org.spring.soap2rest.rest.web.RestRoles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -32,7 +31,7 @@ public class SyncResource {
 
     // curl localhost:8079/soap2rest/v1/rest/sync/
     // http://localhost:8079/soap2rest/v1/rest/sync/
-    @RequestMapping("**/**")
+    @RequestMapping()
     @RolesAllowed(RestRoles.REST_CLIENT_ROLE)
     public String about() {
         return "Sync Realm! Client role. \n";
@@ -47,21 +46,72 @@ public class SyncResource {
     }
 
     /**
-     * curl -X POST -H "Content-Type: application/json" -d '{
-     * "test44" : "test55"
-     * }' http://localhost:8079/soap2rest/v1/rest/sync/response --user restadmin:restadmin
-     */
 
+     curl -X GET http://localhost:8079/soap2rest/rest/v1/sync/response --user restadmin:restadmin
+
+     */
     // http://localhost:8079/soap2rest/v1/rest/sync/response
-    @RequestMapping(value = "/response", method = RequestMethod.POST,
-            consumes = {MediaType.APPLICATION_JSON_VALUE}, produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize(RestRoles.HAS_ADMIN_ROLE)
-    public ResponseEntity response(
+    @RequestMapping(
+            value = "/response",
+            method = RequestMethod.GET,
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    @RolesAllowed(RestRoles.REST_ADMIN_ROLE)
+    public ResponseEntity getResponse(HttpServletRequest request) {
+        log.warn(String.format("Sync GET request was accepted."));
+
+        return ResponseEntity
+                .ok()
+                .body(responseGeneratorServices.getRandomResponse());
+    }
+
+    /**
+
+     curl -X PUT http://localhost:8079/soap2rest/rest/v1/sync/response --user restadmin:restadmin
+
+     */
+    // http://localhost:8079/soap2rest/v1/rest/sync/response
+    @RequestMapping(
+            value = "/response",
+            method = RequestMethod.PUT,
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    @RolesAllowed(RestRoles.REST_ADMIN_ROLE)
+    public ResponseEntity putResponse(
             HttpServletRequest request,
             @RequestBody Map<String, String> object) {
+        log.warn(String.format("Sync PUT request was accepted. Map content = %s", object.toString()));
 
-        log.warn(String.format("Sync request was accepted. Map content = %s", object.toString()));
-        return ResponseEntity.ok().body(responseGeneratorServices.getRandomResponse());
+        return ResponseEntity
+                .ok()
+                .body(responseGeneratorServices.getRandomResponse());
+    }
+
+    /**
+
+     curl -X POST -H "Content-Type: application/json" -d '{
+     "test44" : "test55"
+     }' http://localhost:8079/soap2rest/rest/v1/sync/response --user restadmin:restadmin
+
+     */
+    // http://localhost:8079/soap2rest/v1/rest/sync/response
+    @RequestMapping(
+            value = "/response",
+            method = RequestMethod.POST,
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    @RolesAllowed(RestRoles.REST_ADMIN_ROLE)
+    public ResponseEntity postResponse(
+            HttpServletRequest request,
+            @RequestBody Map<String, String> object) {
+        log.warn(String.format("Sync POST request was accepted. Map content = %s", object.toString()));
+
+        return ResponseEntity
+                .ok()
+                .body(responseGeneratorServices.getRandomResponse());
     }
 
 }
