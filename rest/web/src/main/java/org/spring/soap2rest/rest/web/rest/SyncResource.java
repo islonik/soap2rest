@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.spring.soap2rest.rest.impl.ResponseGeneratorServices;
 import org.spring.soap2rest.rest.web.RestResources;
 import org.spring.soap2rest.rest.web.RestRoles;
+import org.spring.soap2rest.rest.web.utils.ClientLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -54,11 +55,11 @@ public class SyncResource {
     @RequestMapping(
             value = "/response",
             method = RequestMethod.GET,
-            consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     @RolesAllowed(RestRoles.REST_ADMIN_ROLE)
-    public ResponseEntity getResponse(HttpServletRequest request) {
+    @ClientLogger
+    public ResponseEntity getResponse(HttpServletRequest request) { // @ClientLogger
         log.warn(String.format("Sync GET request was accepted."));
 
         return ResponseEntity
@@ -79,8 +80,9 @@ public class SyncResource {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     @RolesAllowed(RestRoles.REST_ADMIN_ROLE)
+    @ClientLogger
     public ResponseEntity putResponse(
-            HttpServletRequest request,
+            HttpServletRequest request, // @ClientLogger
             @RequestBody Map<String, String> object) {
         log.warn(String.format("Sync PUT request was accepted. Map content = %s", object.toString()));
 
@@ -104,8 +106,9 @@ public class SyncResource {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     @RolesAllowed(RestRoles.REST_ADMIN_ROLE)
+    @ClientLogger
     public ResponseEntity postResponse(
-            HttpServletRequest request,
+            HttpServletRequest httpRequest, // @ClientLogger
             @RequestBody Map<String, String> object) {
         log.warn(String.format("Sync POST request was accepted. Map content = %s", object.toString()));
 
