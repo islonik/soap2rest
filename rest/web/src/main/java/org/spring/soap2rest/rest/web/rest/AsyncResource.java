@@ -6,9 +6,11 @@ import org.spring.soap2rest.rest.api.model.AsyncRestRequest;
 import org.spring.soap2rest.rest.impl.ResponseGeneratorServices;
 import org.spring.soap2rest.rest.impl.ValidationServices;
 import org.spring.soap2rest.rest.web.RestResources;
+import org.spring.soap2rest.rest.web.RestRoles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -23,7 +25,7 @@ import java.util.concurrent.Executors;
 import java.util.function.Supplier;
 
 /**
- * Created by nikilipa on 2/1/17.
+ * Async Realm with PreAuthorize security.
  */
 @RestController
 @RequestMapping(value = RestResources.ASYNC_PATH)
@@ -42,9 +44,19 @@ public class AsyncResource {
     private ExecutorService executor = Executors.newCachedThreadPool();
 
     // curl localhost:8079/soap2rest/v1/rest/async
+    // http://localhost:8079/soap2rest/v1/rest/async
     @RequestMapping("**/**")
+    @PreAuthorize(RestRoles.HAS_CLIENT_ROLE)
     public String about() {
-        return "Async Realm!\n";
+        return "Async Realm! Client role.\n";
+    }
+
+    // curl localhost:8079/soap2rest/v1/rest/async/auth
+    // http://localhost:8079/soap2rest/v1/rest/async/auth
+    @RequestMapping("**/auth")
+    @PreAuthorize(RestRoles.HAS_ADMIN_ROLE)
+    public String auth() {
+        return "Async Realm! Admin role.\n";
     }
 
     private DeferredResult<ResponseEntity> asyncExecute(Supplier<ResponseEntity> supplier) {
@@ -74,7 +86,7 @@ public class AsyncResource {
     // http://localhost:8079/soap2rest/v1/rest/async/notify
     @RequestMapping(value = "/notify", method = RequestMethod.PUT,
             consumes = {MediaType.APPLICATION_JSON_VALUE}, produces = MediaType.APPLICATION_JSON_VALUE)
-    // TODO: security?
+    @PreAuthorize(RestRoles.HAS_ADMIN_ROLE)
     public DeferredResult<ResponseEntity> notify(
             HttpServletRequest request,
             @RequestBody AsyncRestRequest asyncRestRequest) throws Exception {

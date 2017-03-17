@@ -36,7 +36,7 @@ public class User {
             this.roles = new ArrayList<>();
             StringTokenizer stringTokenizer = new StringTokenizer(roles, ",");
             while (stringTokenizer.hasMoreTokens()) {
-                String role = stringTokenizer.nextToken();
+                String role = stringTokenizer.nextToken().trim();
                 this.roles.add(role);
             }
         }

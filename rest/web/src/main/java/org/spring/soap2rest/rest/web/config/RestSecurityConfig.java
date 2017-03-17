@@ -2,7 +2,6 @@ package org.spring.soap2rest.rest.web.config;
 
 import org.spring.soap2rest.rest.web.RestResources;
 import org.spring.soap2rest.rest.web.RestRoles;
-import org.spring.soap2rest.rest.web.config.RestAuthenticationEntryPoint;
 import org.spring.soap2rest.rest.web.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -21,16 +20,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+/**
+ * To use PreAuthorize and JSR-250 annotations, we should set up: prePostEnabled = true, jsr250Enabled = true
+ */
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(securedEnabled=true, prePostEnabled=true)
+@EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true, jsr250Enabled = true)
 public class RestSecurityConfig extends WebSecurityConfigurerAdapter {
+
+    private static final String USERS_CONFIG = "users.properties";
+    private static final String ROLES_CONFIG = "roles.properties";
 
     private Properties readUsersFile() throws IOException {
         // it works one time during spring-boot startup
         Properties users = new Properties();
         ClassLoader classLoader = getClass().getClassLoader();
-        try (InputStream inputStream = classLoader.getResourceAsStream("users.properties")) {
+        try (InputStream inputStream = classLoader.getResourceAsStream(USERS_CONFIG)) {
             users.load(inputStream);
         }
         return users;
@@ -40,7 +45,7 @@ public class RestSecurityConfig extends WebSecurityConfigurerAdapter {
         // it works one time during spring-boot startup
         Properties users = new Properties();
         ClassLoader classLoader = getClass().getClassLoader();
-        try (InputStream inputStream = classLoader.getResourceAsStream("roles.properties")) {
+        try (InputStream inputStream = classLoader.getResourceAsStream(ROLES_CONFIG)) {
             users.load(inputStream);
         }
         return users;
@@ -72,7 +77,8 @@ public class RestSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable()
                 .authorizeRequests()
-                .antMatchers(RestResources.SYNC_MATCHER, RestResources.ASYNC_MATCHER).hasRole(RestRoles.REST_ROLE)
+                .antMatchers(RestResources.SYNC_SECURITY, RestResources.ASYNC_SECURITY).hasRole(RestRoles.REST_ADMIN_ROLE)
+                .antMatchers(RestResources.SYNC_SECURITY, RestResources.ASYNC_SECURITY).hasRole(RestRoles.REST_CLIENT_ROLE)
                 .and().httpBasic().realmName(RestRoles.S2R_REALM_NAME).authenticationEntryPoint(getBasicAuthEntryPoint())
                 .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     }
@@ -89,7 +95,7 @@ public class RestSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    public RestAuthenticationEntryPoint getBasicAuthEntryPoint(){
+    public RestAuthenticationEntryPoint getBasicAuthEntryPoint() {
         return new RestAuthenticationEntryPoint();
     }
 

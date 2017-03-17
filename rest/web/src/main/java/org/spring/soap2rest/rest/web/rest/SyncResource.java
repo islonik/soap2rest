@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.spring.soap2rest.rest.impl.ResponseGeneratorServices;
 import org.spring.soap2rest.rest.web.RestResources;
+import org.spring.soap2rest.rest.web.RestRoles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -13,11 +14,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.security.RolesAllowed;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 /**
- * Created by nikilipa on 1/31/17.
+ * Sync Realm with jsr-250 security.
  */
 @RestController
 @RequestMapping(value = RestResources.SYNC_PATH)
@@ -29,18 +31,19 @@ public class SyncResource {
     private ResponseGeneratorServices responseGeneratorServices;
 
     // curl localhost:8079/soap2rest/v1/rest/sync/
-    @RequestMapping()
-    //@RequestMapping("**/**")
+    // http://localhost:8079/soap2rest/v1/rest/sync/
+    @RequestMapping("**/**")
+    @RolesAllowed(RestRoles.REST_CLIENT_ROLE)
     public String about() {
-        return "Sync Realm!\n";
+        return "Sync Realm! Client role. \n";
     }
 
     // curl localhost:8079/soap2rest/v1/rest/sync/auth
+    // http://localhost:8079/soap2rest/v1/rest/sync/auth
     @RequestMapping("**/auth")
-    //@Secured(RestRoles.REST_ROLE)
-    @PreAuthorize("hasRole('WEBSERVICE.SOAP2REST.REST')")
+    @RolesAllowed(RestRoles.REST_ADMIN_ROLE)
     public String auth() {
-        return "Auth Sync Realm!\n";
+        return "Sync Realm! Admin role.\n";
     }
 
     /**
@@ -52,7 +55,7 @@ public class SyncResource {
     // http://localhost:8079/soap2rest/v1/rest/sync/response
     @RequestMapping(value = "/response", method = RequestMethod.POST,
             consumes = {MediaType.APPLICATION_JSON_VALUE}, produces = MediaType.APPLICATION_JSON_VALUE)
-    // TODO: security?
+    @PreAuthorize(RestRoles.HAS_ADMIN_ROLE)
     public ResponseEntity response(
             HttpServletRequest request,
             @RequestBody Map<String, String> object) {
