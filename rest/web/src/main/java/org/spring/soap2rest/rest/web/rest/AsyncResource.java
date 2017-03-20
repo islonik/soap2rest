@@ -7,9 +7,12 @@ import org.spring.soap2rest.rest.impl.ResponseGeneratorServices;
 import org.spring.soap2rest.rest.impl.ValidationServices;
 import org.spring.soap2rest.rest.web.RestResources;
 import org.spring.soap2rest.rest.web.RestRoles;
+import org.spring.soap2rest.rest.web.utils.ClientLogger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.async.DeferredResult;
 
+import javax.annotation.security.RolesAllowed;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -43,66 +47,109 @@ public class AsyncResource {
 
     private ExecutorService executor = Executors.newCachedThreadPool();
 
+    private DeferredResult<ResponseEntity> asyncExecute(Supplier<ResponseEntity> supplier) {
+        final DeferredResult<ResponseEntity> deffResult = new DeferredResult(TIMEOUT, ResponseGeneratorServices.TIMEOUT_MESSAGE);
+
+        deffResult.onTimeout(() -> {
+            deffResult.setErrorResult(
+                    ResponseEntity
+                            .status(HttpStatus.REQUEST_TIMEOUT)
+                            .body(ResponseGeneratorServices.TIMEOUT_MESSAGE)
+            );
+        });
+        CompletableFuture
+                .supplyAsync(supplier, executor)
+                .thenApply(respEntity -> deffResult.setResult(respEntity))
+                .exceptionally(throwable ->
+                        deffResult.setErrorResult(responseGeneratorServices.getErrorResponse("500", throwable.getMessage()))
+                );
+
+        return deffResult;
+    }
+
     // curl localhost:8079/soap2rest/v1/rest/async
     // http://localhost:8079/soap2rest/v1/rest/async
     @RequestMapping("**/**")
     @PreAuthorize(RestRoles.HAS_CLIENT_ROLE)
-    public String about() {
-        return "Async Realm! Client role.\n";
+    public DeferredResult<ResponseEntity> about() {
+        return asyncExecute(() -> {
+            log.info(String.format("Async GET request was accepted."));
+
+            return ResponseEntity.ok("Async Realm! Client role.\n");
+        });
     }
 
     // curl localhost:8079/soap2rest/v1/rest/async/auth
     // http://localhost:8079/soap2rest/v1/rest/async/auth
     @RequestMapping("**/auth")
     @PreAuthorize(RestRoles.HAS_ADMIN_ROLE)
-    public String auth() {
-        return "Async Realm! Admin role.\n";
+    public DeferredResult<ResponseEntity> auth() {
+        return asyncExecute(() -> {
+            log.info(String.format("Async GET request was accepted."));
+
+            return ResponseEntity.ok("Async Realm! Admin role.\n");
+        });
     }
 
-    private DeferredResult<ResponseEntity> asyncExecute(Supplier<ResponseEntity> supplier) {
-        DeferredResult<ResponseEntity> result = new DeferredResult(TIMEOUT, ResponseGeneratorServices.TIMEOUT_MESSAGE);
+    // curl localhost:8079/soap2rest/v1/rest/async/timeout
+    // http://localhost:8079/soap2rest/v1/rest/async/timeout
+    @RequestMapping("**/timeout")
+    @PreAuthorize(RestRoles.HAS_ADMIN_ROLE)
+    public DeferredResult<ResponseEntity> timeoutSimulation() {
+        return asyncExecute(() -> {
+            log.info(String.format("Async GET request was accepted."));
 
-        CompletableFuture
-                .supplyAsync(supplier, executor)
-                .thenApply(respEntity -> result.setResult(respEntity))
-                .exceptionally(throwable ->
-                        result.setErrorResult(responseGeneratorServices.getErrorResponse("500", throwable.getMessage()))
-                );
+            try {
+                log.warn(String.format("We are sleeping..."));
+                Thread.sleep(5000L);
+            } catch (InterruptedException e) {
+                log.error("just in case we log it " + e.getMessage(), e);
+            }
 
-        return result;
+            return ResponseEntity.ok("Timeout simulation.\n");
+        });
     }
 
     /**
-     *
-      curl -X PUT -H "Content-Type: application/json" -d '{
-      "messageId" : "test11",
-      "conversationId" : "test22",
-      "code" : "110",
-      "desc" : "J2ME: Write once - debug everywhere."
-      }' http://localhost:8079/soap2rest/v1/rest/async/notify --user restadmin:restadmin
+     * curl -X GET http://localhost:8079/soap2rest/rest/v1/async/response --user restadmin:restadmin
+     */
+    // http://localhost:8079/soap2rest/v1/rest/async/response
+    @RequestMapping(
+            value = "/response",
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    @RolesAllowed(RestRoles.REST_ADMIN_ROLE)
+    @ClientLogger
+    @Async
+    public DeferredResult<ResponseEntity> getResponse(HttpServletRequest request) { // @ClientLogger
 
+        return asyncExecute(() -> {
+            log.info(String.format("Async GET request was accepted."));
+
+            return ResponseEntity
+                    .ok()
+                    .body(responseGeneratorServices.getRandomResponse());
+        });
+    }
+
+    /**
+     * curl -X PUT -H "Content-Type: application/json" -d '{
+     * "messageId" : "test11",
+     * "conversationId" : "test22",
+     * "code" : "110",
+     * "desc" : "J2ME: Write once - debug everywhere."
+     * }' http://localhost:8079/soap2rest/v1/rest/async/notify --user restadmin:restadmin
      */
 
     // http://localhost:8079/soap2rest/v1/rest/async/notify
     @RequestMapping(value = "/notify", method = RequestMethod.PUT,
             consumes = {MediaType.APPLICATION_JSON_VALUE}, produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize(RestRoles.HAS_ADMIN_ROLE)
+    @ClientLogger
     public DeferredResult<ResponseEntity> notify(
-            HttpServletRequest request,
+            HttpServletRequest request, // ClientLogger
             @RequestBody AsyncRestRequest asyncRestRequest) throws Exception {
-
-        // TODO: move to an interceptor?
-        log.info(
-                String.format(
-                        "%nWe accepted %s-request where url = %s, Client Address = %s, Client Host = %s, Client Port = %s, User = %s",
-                        request.getMethod(),
-                        request.getRequestURL().toString(),
-                        request.getRemoteAddr(),
-                        request.getRemoteHost(),
-                        request.getRemotePort(),
-                        request.getRemoteUser()
-                )
-        );
 
         return asyncExecute(() -> {
             log.warn(String.format("Async request was accepted. %s", asyncRestRequest.toString()));

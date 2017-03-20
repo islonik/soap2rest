@@ -19,7 +19,7 @@ public class ResponseGeneratorServices {
 
     private static final Logger log = LoggerFactory.getLogger(ResponseGeneratorServices.class);
 
-    public static final String TIMEOUT_MESSAGE = "504:Gateway timeout";
+    public static final String TIMEOUT_MESSAGE = "Request timeout occurred.";
 
     @Autowired
     private JsonServices jsonServices;

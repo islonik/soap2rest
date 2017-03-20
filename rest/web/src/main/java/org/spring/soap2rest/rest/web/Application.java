@@ -7,17 +7,16 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
-import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.annotation.AsyncConfigurerSupport;
 
 /**
  * Created by nikilipa on 1/31/17.
  */
 @SpringBootApplication
-@ComponentScan({"org.spring.soap2rest.utils","org.spring.soap2rest.rest"})
-@EnableAsync
+@ComponentScan({"org.spring.soap2rest.utils", "org.spring.soap2rest.rest"})
 @EnableAutoConfiguration
 @EnableAspectJAutoProxy
-public class Application {
+public class Application extends AsyncConfigurerSupport {
 
     private static final Logger log = LoggerFactory.getLogger(Application.class);
 

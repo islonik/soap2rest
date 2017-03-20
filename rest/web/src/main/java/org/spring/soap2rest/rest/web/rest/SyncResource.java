@@ -60,7 +60,7 @@ public class SyncResource {
     @RolesAllowed(RestRoles.REST_ADMIN_ROLE)
     @ClientLogger
     public ResponseEntity getResponse(HttpServletRequest request) { // @ClientLogger
-        log.warn(String.format("Sync GET request was accepted."));
+        log.info(String.format("Sync GET request was accepted."));
 
         return ResponseEntity
                 .ok()
@@ -84,7 +84,7 @@ public class SyncResource {
     public ResponseEntity putResponse(
             HttpServletRequest request, // @ClientLogger
             @RequestBody Map<String, String> object) {
-        log.warn(String.format("Sync PUT request was accepted. Map content = %s", object.toString()));
+        log.info(String.format("Sync PUT request was accepted. Map content = %s", object.toString()));
 
         return ResponseEntity
                 .ok()
@@ -110,7 +110,7 @@ public class SyncResource {
     public ResponseEntity postResponse(
             HttpServletRequest httpRequest, // @ClientLogger
             @RequestBody Map<String, String> object) {
-        log.warn(String.format("Sync POST request was accepted. Map content = %s", object.toString()));
+        log.info(String.format("Sync POST request was accepted. Map content = %s", object.toString()));
 
         return ResponseEntity
                 .ok()
