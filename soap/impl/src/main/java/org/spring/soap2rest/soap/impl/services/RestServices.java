@@ -1,62 +1,108 @@
 package org.spring.soap2rest.soap.impl.services;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.spring.soap2rest.rest.api.model.AsyncRestRequest;
-import org.spring.soap2rest.soap.impl.generated.ds.ws.DSResponse;
+import org.spring.soap2rest.rest.api.model.RestResponse;
+import org.spring.soap2rest.soap.impl.generated.ds.ws.ServiceOrderStatus;
+import org.spring.soap2rest.soap.impl.model.Service;
+import org.spring.soap2rest.soap.impl.model.db.AuthUser;
+import org.spring.soap2rest.soap.impl.rest.GetClient;
+import org.spring.soap2rest.soap.impl.rest.PostClient;
 import org.spring.soap2rest.soap.impl.rest.PutClient;
 import org.spring.soap2rest.utils.services.JsonServices;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeoutException;
+import java.io.IOException;
+import java.util.Optional;
 
 /**
  * Created by nikilipa on 8/13/16.
  */
-@Service
+@Component
 public class RestServices {
 
     @Autowired
     private JsonServices jsonServices;
 
     @Autowired
+    private ParserServices parserServices;
+
+    @Autowired
     private DbAuthServices dbAuthServices;
+
+    @Autowired
+    private GetClient getClient;
 
     @Autowired
     private PutClient putClient;
 
-    private static final String path2rest = "http://localhost:8079/soap2rest/v1/rest";
+    @Autowired
+    private PostClient postClient;
 
-    public String getResponseRequest(Map<String, String> map) {
-        RestTemplateBuilder restTemplateBuilder = new RestTemplateBuilder();
-        RestTemplate restTemplate = restTemplateBuilder
-                .rootUri(path2rest)
-                .basicAuthorization("restadmin", "restadmin")
-                .build();
+    @Value("${host}")
+    private String path2rest;
 
-        String uri = String.format("%s/sync/response", path2rest);
-        String postResponse = restTemplate.postForObject(uri, map, String.class);
-
-        return postResponse;
+    private String getPath2rest() {
+        return path2rest;
     }
 
-    public String sendNotifyRequest(DSResponse dsResponse)
-            throws JsonProcessingException, InterruptedException, ExecutionException, TimeoutException {
-
-        String uri = String.format("%s/async/notify", path2rest);
-
-        AsyncRestRequest asyncRestRequest = new AsyncRestRequest();
-        asyncRestRequest.setMessageId(dsResponse.getHeader().getMessageId());
-        asyncRestRequest.setConversationId(dsResponse.getHeader().getConversationId());
-        asyncRestRequest.setCode(dsResponse.getBody().getServiceOrderStatus().getStatusType().getCode());
-        asyncRestRequest.setDesc(dsResponse.getBody().getServiceOrderStatus().getStatusType().getDesc());
-
-        String putResponse = putClient.send(uri, asyncRestRequest);
-
-        return putResponse;
+    public ServiceOrderStatus sendGetRequest(Service service, String urlTemplate) {
+        AuthUser user = dbAuthServices.getUser(service.getName());
+        String url = String.format(urlTemplate, getPath2rest());
+        try {
+            String getResponse = getClient.send(user.getUsername(), user.getPassphrase(), url);
+            return parseHttpResponse(getResponse);
+        } catch (IOException ioe) {
+            return parserServices.createServiceOrderStatus(ParserServices.CODE_BUG, ioe.getMessage());
+        }
     }
+
+    public ServiceOrderStatus sendPostRequest(Service service, String urlTemplate, String body) {
+        AuthUser user = dbAuthServices.getUser(service.getName());
+        String endpoint = String.format(urlTemplate, getPath2rest());
+        try {
+            String getResponse = postClient.send(user.getUsername(), user.getPassphrase(), endpoint, body);
+            return parseHttpResponse(getResponse);
+        } catch (IOException ioe) {
+            return parserServices.createServiceOrderStatus(ParserServices.CODE_BUG, ioe.getMessage());
+        }
+    }
+
+    public ServiceOrderStatus sendPutRequest(Service service, String urlTemplate, AsyncRestRequest body) {
+        AuthUser user = dbAuthServices.getUser(service.getName());
+        String endpoint = String.format(urlTemplate, getPath2rest());
+        try {
+            String getResponse = putClient.send(user.getUsername(), user.getPassphrase(), endpoint, body);
+            return parseHttpResponse(getResponse);
+        } catch (IOException ioe) {
+            return parserServices.createServiceOrderStatus(ParserServices.CODE_BUG, ioe.getMessage());
+        }
+    }
+
+    private ServiceOrderStatus parseHttpResponse(String httpResponse) throws IOException {
+        String code;
+        String message;
+        if (jsonServices.isJson(httpResponse)) { // json
+            RestResponse restResponse = jsonServices.jsonToObject(httpResponse, RestResponse.class);
+            if (restResponse.getError() != null) {
+                code = restResponse.getError().getCode();
+                message = restResponse.getError().getMessage();
+            } else {
+                code = ParserServices.CODE_OK;
+                message = ParserServices.MESSAGE_SUCCESS;
+            }
+        } else { // html code
+            Optional<String> htmlError = parserServices.getHtmlBodyContent(httpResponse);
+            if (htmlError.isPresent()) {
+                code = ParserServices.CODE_BAD;
+                message = htmlError.get();
+            } else {
+                code = ParserServices.CODE_BUG;
+                message = httpResponse;
+            }
+        }
+        return parserServices.createServiceOrderStatus(code, message);
+    }
+
 }

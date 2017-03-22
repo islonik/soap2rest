@@ -151,12 +151,12 @@ public class AsyncResource {
             @RequestBody AsyncRestRequest asyncRestRequest) throws Exception {
 
         return asyncExecute(() -> {
-            log.warn(String.format("Async request was accepted. %s", asyncRestRequest.toString()));
+            log.warn(String.format("Async PUT request was accepted. %s", asyncRestRequest.toString()));
             Optional<ResponseEntity> errorResp = validationServices.validAsyncRestRequest(asyncRestRequest);
             if (errorResp.isPresent()) {
                 return errorResp.get();
             } else {
-                log.info(String.format("Async request was validated. %s", asyncRestRequest.toString()));
+                log.info(String.format("Async PUT request was validated. %s", asyncRestRequest.toString()));
                 ResponseEntity okResp = ResponseEntity.ok(responseGeneratorServices.getAckResponse());
                 return okResp;
             }

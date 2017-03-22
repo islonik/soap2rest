@@ -1,24 +1,27 @@
 package org.spring.soap2rest.soap.impl.services;
 
-import org.spring.soap2rest.rest.api.model.RestResponse;
 import org.spring.soap2rest.soap.impl.generated.ds.ws.*;
-import org.spring.soap2rest.utils.services.JsonServices;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.spring.soap2rest.soap.impl.model.Service;
+import org.spring.soap2rest.soap.impl.model.ServiceType;
+import org.springframework.stereotype.Component;
 
-import java.io.IOException;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
-/**
- * Created by nikilipa on 8/13/16.
- */
-@Service
+@Component
 public class ParserServices {
 
-    @Autowired
-    private JsonServices jsonServices;
+    public static final String CODE_OK = "0";
+    public static final String CODE_BAD = "400";
+    public static final String CODE_BUG = "500";
+    public static final String CODE_TIMEOUT = "504";
+    public static final String MESSAGE_ACK = "Acknowledgement";
+    public static final String MESSAGE_SUCCESS = "SUCCESS";
+    public static final String MESSAGE_ERROR = "Internal Server Error";
 
     public boolean isAsync(DSRequest dsRequest) {
         return Boolean.valueOf(dsRequest.getBody().getAsyncronousResponse());
@@ -90,6 +93,19 @@ public class ParserServices {
         return dsResponse;
     }
 
+    public DSResponse getDSResponse(DSRequest dsRequest, ServiceOrderStatus sos) {
+        DSResponse dsResponse = new DSResponse();
+        dsResponse.setHeader(dsRequest.getHeader());
+
+        DSResponse.Body body = new DSResponse.Body();
+        dsResponse.setBody(body);
+
+        sos.setServiceOrderID(dsRequest.getBody().getServiceOrder().getServiceOrderID());
+        body.setServiceOrderStatus(sos);
+
+        return dsResponse;
+    }
+
     public Optional<String> getHtmlBodyContent(String htmlResponse) {
         if (htmlResponse.contains("body")) {
             int index = htmlResponse.indexOf("body");
@@ -98,8 +114,33 @@ public class ParserServices {
         return Optional.empty();
     }
 
-    public RestResponse getRestResponse(String httpResponse) throws IOException {
-        return (RestResponse) jsonServices.jsonToObject(httpResponse, RestResponse.class);
+    public Service xml2service(DSRequest dsRequest) {
+        List<KeyValuesType> xmlParams = dsRequest.getBody().getServiceOrder().getParams();
+
+        Map<String, String> serviceParams = new HashMap<>();
+        for (KeyValuesType keyValuesType : xmlParams) {
+            String key = keyValuesType.getKey();
+            String value = keyValuesType.getValue();
+
+            serviceParams.putIfAbsent(key, value);
+        }
+        return new Service(
+                dsRequest.getBody().getServiceOrder().getServiceOrderID(),
+                dsRequest.getBody().getServiceOrder().getServiceName(),
+                ServiceType.valueOf(dsRequest.getBody().getServiceOrder()),
+                dsRequest.getHeader().getMessageId(),
+                dsRequest.getHeader().getConversationId(),
+                serviceParams
+        );
+    }
+
+    public ServiceOrderStatus createServiceOrderStatus(String code, String message) {
+        ServiceOrderStatus serviceOrderStatus = new ServiceOrderStatus();
+        StatusType statusType = new StatusType();
+        statusType.setCode(code);
+        statusType.setDesc(message);
+        serviceOrderStatus.setStatusType(statusType);
+        return serviceOrderStatus;
     }
 
 }

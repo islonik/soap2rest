@@ -3,37 +3,34 @@ package org.spring.soap2rest.soap.impl.services;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.spring.soap2rest.rest.api.model.RestResponse;
+import org.spring.soap2rest.rest.api.model.AsyncRestRequest;
 import org.spring.soap2rest.soap.impl.generated.ds.ws.DSRequest;
 import org.spring.soap2rest.soap.impl.generated.ds.ws.DSResponse;
-import org.spring.soap2rest.soap.impl.generated.ds.ws.KeyValuesType;
+import org.spring.soap2rest.soap.impl.generated.ds.ws.ServiceOrderStatus;
+import org.spring.soap2rest.soap.impl.model.Service;
 import org.spring.soap2rest.utils.services.JsonServices;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeoutException;
+import org.springframework.stereotype.Component;
 
 /**
  * Created by nikilipa on 8/13/16.
  */
-@Service
+@Component
 public class SoapOrchestrator {
 
     private static final Logger log = LoggerFactory.getLogger(SoapOrchestrator.class);
+
+    public static final Long SYNC_TIMEOUT = 12L; // sec
+    public static final Long ASYNC_TIMEOUT = 5L; // min
+
+    @Autowired
+    private JsonServices jsonServices;
 
     @Autowired
     private ParserServices parserServices;
 
     @Autowired
     private RestServices restServices;
-
-    @Autowired
-    private JsonServices jsonServices;
 
     public DSResponse syncProcess(DSRequest dsRequest) {
         return process(dsRequest);
@@ -42,51 +39,38 @@ public class SoapOrchestrator {
     public void asyncProcess(DSRequest dsRequest) {
         try {
             DSResponse dsResponse = process(dsRequest);
-            String ackResponse = restServices.sendNotifyRequest(dsResponse);
-            log.info("\n" + ackResponse);
-        } catch (JsonProcessingException | InterruptedException | ExecutionException | TimeoutException e) {
+            log.info("\n" + jsonServices.objectToJson(dsResponse));
+        } catch (JsonProcessingException e) {
             log.error(e.getMessage(), e);
         }
     }
 
     private DSResponse process(DSRequest dsRequest) {
         try {
-            List<KeyValuesType> params = dsRequest.getBody().getServiceOrder().getParams();
+            Service service = parserServices.xml2service(dsRequest);
+            //String endpoint = RouteServices.valueOf(service.getType(), service.getName());
 
-            Map<String, String> mapBody = new HashMap<>();
-            for (KeyValuesType keyValuesType : params) {
-                String key = keyValuesType.getKey();
-                String value = keyValuesType.getValue();
+            ServiceOrderStatus sos = null;
+            if (service.getName().equalsIgnoreCase(RouteServices.SYNC)) {
+                sos = restServices.sendGetRequest(service, "%s/sync/response");
+            } else if (service.getName().equalsIgnoreCase(RouteServices.ASYNC)) {
+                sos = restServices.sendGetRequest(service, "%s/async/response");
+            } else {
+                sos = restServices.sendGetRequest(service, "%s/async/response");
 
-                mapBody.putIfAbsent(key, value);
+                AsyncRestRequest asyncRestRequest = new AsyncRestRequest();
+                asyncRestRequest.setMessageId(dsRequest.getHeader().getMessageId());
+                asyncRestRequest.setConversationId(dsRequest.getHeader().getConversationId());
+                asyncRestRequest.setCode(sos.getStatusType().getCode());
+                asyncRestRequest.setDesc(sos.getStatusType().getDesc());
+
+                sos = restServices.sendPutRequest(service, "%s/async/notify", asyncRestRequest);
             }
-
-            String httpResponse = restServices.getResponseRequest(mapBody);
-
-            // parse http post response
-            if (jsonServices.isJson(httpResponse)) { // json
-
-                RestResponse restResponse = parserServices.getRestResponse(httpResponse);
-                if (restResponse.getError() != null) {
-                    return parserServices.getDSResponse(
-                            dsRequest,
-                            restResponse.getError().getCode(),
-                            restResponse.getError().getMessage()
-                    );
-                }
-            } else { // html code
-                Optional<String> htmlError = parserServices.getHtmlBodyContent(httpResponse);
-                if (htmlError.isPresent()) {
-                    return parserServices.getDSResponse(dsRequest, "400", htmlError.get());
-                } else {
-                    return parserServices.getDSResponse(dsRequest, "500", httpResponse);
-                }
-            }
-
-            return parserServices.getDSResponse(dsRequest, "0", "SUCCESS");
+            return parserServices.getDSResponse(dsRequest, sos);
         } /*catch (TimeoutException te) {
             return parserServices.getDSResponse(dsRequest, "504", te.getMessage());
         } */catch (Exception e) {
+            log.error(e.getMessage(), e);
             return parserServices.getDSResponse(dsRequest, "500", e.getMessage());
         }
     }

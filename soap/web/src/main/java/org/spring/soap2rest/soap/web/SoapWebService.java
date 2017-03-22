@@ -2,7 +2,6 @@ package org.spring.soap2rest.soap.web;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.spring.soap2rest.soap.impl.AsyncProcess;
 import org.spring.soap2rest.soap.impl.generated.ds.ws.DSRequest;
 import org.spring.soap2rest.soap.impl.generated.ds.ws.DSResponse;
 import org.spring.soap2rest.soap.impl.generated.ds.ws.HandleRequestPortType;
@@ -14,7 +13,6 @@ import org.springframework.ws.server.endpoint.annotation.PayloadRoot;
 import org.springframework.ws.server.endpoint.annotation.RequestPayload;
 import org.springframework.ws.server.endpoint.annotation.ResponsePayload;
 
-import javax.jws.WebParam;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -60,7 +58,7 @@ public class SoapWebService implements HandleRequestPortType {
         parserServices.setUpDsRequest(dsRequest);
 
         if (parserServices.isAsync(dsRequest)) {
-            executor.execute(new AsyncProcess(soapOrchestrator, dsRequest));
+            executor.execute(() -> soapOrchestrator.asyncProcess(dsRequest));
             return parserServices.getAckDSResponse(dsRequest);
         }
 
