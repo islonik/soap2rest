@@ -121,7 +121,6 @@ public class AsyncResource {
     )
     @RolesAllowed(RestRoles.REST_ADMIN_ROLE)
     @ClientLogger
-    @Async
     public DeferredResult<ResponseEntity> getResponse(HttpServletRequest request) { // @ClientLogger
 
         return asyncExecute(() -> {
