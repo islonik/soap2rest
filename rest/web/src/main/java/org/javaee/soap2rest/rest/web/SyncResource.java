@@ -1,4 +1,4 @@
-package org.javaee.soap2rest.rest.web.rest;
+package org.javaee.soap2rest.rest.web;
 
 import org.javaee.soap2rest.rest.impl.services.ResponseGeneratorServices;
 import org.javaee.soap2rest.rest.web.utils.LoggerInterceptor;

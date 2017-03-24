@@ -1,4 +1,4 @@
-package org.javaee.soap2rest.rest.web.rest;
+package org.javaee.soap2rest.rest.web;
 
 /**
  * Created by nikilipa on 8/12/16.

@@ -1,7 +1,4 @@
-package org.javaee.soap2rest.rest.web.rest;
-
-import org.javaee.soap2rest.rest.web.rest.AsyncResource;
-import org.javaee.soap2rest.rest.web.rest.SyncResource;
+package org.javaee.soap2rest.rest.web;
 
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;

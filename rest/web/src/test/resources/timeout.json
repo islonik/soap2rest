@@ -1,0 +1,6 @@
+{
+  "error" : {
+    "code" : "504",
+    "message" : "Gateway timeout"
+  }
+}

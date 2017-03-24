@@ -15,6 +15,10 @@ public class WildFlyResources {
     @Resource(name = WildFlyResources.REST_EXECUTOR)
     private ExecutorService executor;
 
+    public void setExecutor(ExecutorService executor) {
+        this.executor = executor;
+    }
+
     public ExecutorService getExecutor() {
         return executor;
     }

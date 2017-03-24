@@ -31,7 +31,6 @@ public class CamelManager {
 
     private final JsonServices jsonServices;
     private final ParserServices parserServices;
-    private final CamelStarter camelStarter;
 
     private final CamelContext camelContext;
     private final ProducerTemplate template;
@@ -40,7 +39,6 @@ public class CamelManager {
     public CamelManager(JsonServices jsonServices, ParserServices parserServices, CamelStarter camelStarter) {
         this.jsonServices = jsonServices;
         this.parserServices = parserServices;
-        this.camelStarter = camelStarter;
         this.camelContext = camelStarter.getCamelContext();
         this.template = camelStarter.getTemplate();
     }

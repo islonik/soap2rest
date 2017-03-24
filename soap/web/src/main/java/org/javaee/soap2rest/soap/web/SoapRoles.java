@@ -5,5 +5,5 @@ package org.javaee.soap2rest.soap.web;
  */
 public interface SoapRoles {
 
-    public static final String SOAP_ROLE = "WEBSERVICE.SOAP2REST.SOAP";
+    String SOAP_ROLE = "WEBSERVICE.SOAP2REST.SOAP";
 }
