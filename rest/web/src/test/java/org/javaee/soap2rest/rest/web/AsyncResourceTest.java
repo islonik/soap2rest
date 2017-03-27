@@ -5,20 +5,17 @@ import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
 import org.javaee.soap2rest.rest.impl.services.ResponseGeneratorServices;
 import org.javaee.soap2rest.rest.impl.services.ValidationServices;
+import org.javaee.soap2rest.rest.web.resources.AsyncResource;
 import org.javaee.soap2rest.utils.services.JsonServices;
 import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.ejb.Stateless;
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Singleton;
 import javax.ws.rs.core.Application;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**

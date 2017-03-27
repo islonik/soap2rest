@@ -1,5 +1,8 @@
 package org.javaee.soap2rest.rest.web;
 
+import org.javaee.soap2rest.rest.web.resources.AsyncResource;
+import org.javaee.soap2rest.rest.web.resources.SyncResource;
+
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 import java.util.HashSet;

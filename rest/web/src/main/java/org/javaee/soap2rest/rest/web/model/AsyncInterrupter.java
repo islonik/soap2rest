@@ -1,4 +1,4 @@
-package org.javaee.soap2rest.rest.api.model;
+package org.javaee.soap2rest.rest.web.model;
 
 import java.util.concurrent.Future;
 

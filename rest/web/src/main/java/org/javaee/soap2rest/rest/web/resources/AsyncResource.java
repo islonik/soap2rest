@@ -1,6 +1,8 @@
-package org.javaee.soap2rest.rest.web;
+package org.javaee.soap2rest.rest.web.resources;
 
-import org.javaee.soap2rest.rest.api.model.AsyncInterrupter;
+import org.javaee.soap2rest.rest.web.RestRoles;
+import org.javaee.soap2rest.rest.web.WildFlyResources;
+import org.javaee.soap2rest.rest.web.model.AsyncInterrupter;
 import org.javaee.soap2rest.rest.api.model.AsyncRestRequest;
 import org.javaee.soap2rest.rest.impl.services.ResponseGeneratorServices;
 import org.javaee.soap2rest.rest.impl.services.ValidationServices;
