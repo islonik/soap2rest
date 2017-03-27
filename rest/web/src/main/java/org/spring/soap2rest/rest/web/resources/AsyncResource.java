@@ -52,7 +52,7 @@ public class AsyncResource {
         final DeferredResult<ResponseEntity> deffResult = new DeferredResult(TIMEOUT, ResponseGeneratorServices.TIMEOUT_MESSAGE);
 
         deffResult.onTimeout(() -> {
-            deffResult.setErrorResult(
+            deffResult.setResult(
                     ResponseEntity
                             .status(HttpStatus.REQUEST_TIMEOUT)
                             .body(ResponseGeneratorServices.TIMEOUT_MESSAGE)
