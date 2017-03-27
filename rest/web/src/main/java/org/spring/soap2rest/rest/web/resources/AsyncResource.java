@@ -1,4 +1,4 @@
-package org.spring.soap2rest.rest.web.rest;
+package org.spring.soap2rest.rest.web.resources;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -7,12 +7,12 @@ import org.spring.soap2rest.rest.impl.ResponseGeneratorServices;
 import org.spring.soap2rest.rest.impl.ValidationServices;
 import org.spring.soap2rest.rest.web.RestResources;
 import org.spring.soap2rest.rest.web.RestRoles;
+import org.spring.soap2rest.rest.web.model.AsyncInterrupter;
 import org.spring.soap2rest.rest.web.utils.ClientLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,9 +23,9 @@ import org.springframework.web.context.request.async.DeferredResult;
 import javax.annotation.security.RolesAllowed;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.function.Supplier;
 
 /**
@@ -48,6 +48,7 @@ public class AsyncResource {
     private ExecutorService executor = Executors.newCachedThreadPool();
 
     private DeferredResult<ResponseEntity> asyncExecute(Supplier<ResponseEntity> supplier) {
+        final AsyncInterrupter asyncInterrupter = new AsyncInterrupter();
         final DeferredResult<ResponseEntity> deffResult = new DeferredResult(TIMEOUT, ResponseGeneratorServices.TIMEOUT_MESSAGE);
 
         deffResult.onTimeout(() -> {
@@ -56,14 +57,20 @@ public class AsyncResource {
                             .status(HttpStatus.REQUEST_TIMEOUT)
                             .body(ResponseGeneratorServices.TIMEOUT_MESSAGE)
             );
+            Future future = asyncInterrupter.getTask();
+            if (future != null) {
+                future.cancel(true);
+            }
         });
-        CompletableFuture
-                .supplyAsync(supplier, executor)
-                .thenApply(respEntity -> deffResult.setResult(respEntity))
-                .exceptionally(throwable ->
-                        deffResult.setErrorResult(responseGeneratorServices.getErrorResponse("500", throwable.getMessage()))
-                );
+        asyncInterrupter.setFuture(executor.submit(() -> {
+            try {
 
+                deffResult.setResult(supplier.get());
+            } catch (Throwable t) {
+                deffResult.setErrorResult(responseGeneratorServices.getErrorResponse(
+                        "500", t.getMessage()));
+            }
+        }));
         return deffResult;
     }
 
@@ -125,6 +132,38 @@ public class AsyncResource {
 
         return asyncExecute(() -> {
             log.info(String.format("Async GET request was accepted."));
+
+            return ResponseEntity
+                    .ok()
+                    .body(responseGeneratorServices.getRandomResponse());
+        });
+    }
+
+    // http://localhost:8079/soap2rest/v1/rest/async/timeout
+    @RequestMapping(
+            value = "/timeout",
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    @RolesAllowed(RestRoles.REST_CLIENT_ROLE)
+    @ClientLogger
+    public DeferredResult<ResponseEntity> timeout(HttpServletRequest request) { // @ClientLogger
+
+        return asyncExecute(() -> {
+            log.info(String.format("Async GET request was accepted."));
+
+            int count = 0;
+            try {
+                while (true) {
+                    log.info("We are going to sleep for 500 milliseconds");
+                    Thread.sleep(500L);
+                    if (count++ == 10) {
+                        break;
+                    }
+                }
+            } catch (InterruptedException e) {
+                log.warn("This thread was interrupted by a timeout event.");
+            }
 
             return ResponseEntity
                     .ok()

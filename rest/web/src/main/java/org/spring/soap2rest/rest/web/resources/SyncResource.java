@@ -1,4 +1,4 @@
-package org.spring.soap2rest.rest.web.rest;
+package org.spring.soap2rest.rest.web.resources;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
