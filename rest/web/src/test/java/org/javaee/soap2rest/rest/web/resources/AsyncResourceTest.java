@@ -1,11 +1,11 @@
-package org.javaee.soap2rest.rest.web;
+package org.javaee.soap2rest.rest.web.resources;
 
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
 import org.javaee.soap2rest.rest.impl.services.ResponseGeneratorServices;
 import org.javaee.soap2rest.rest.impl.services.ValidationServices;
-import org.javaee.soap2rest.rest.web.resources.AsyncResource;
+import org.javaee.soap2rest.rest.web.WildFlyResources;
 import org.javaee.soap2rest.utils.services.JsonServices;
 import org.junit.Assert;
 import org.junit.Test;
