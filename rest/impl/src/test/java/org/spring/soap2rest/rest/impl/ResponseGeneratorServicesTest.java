@@ -2,6 +2,7 @@ package org.spring.soap2rest.rest.impl;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.spring.soap2rest.rest.impl.services.ResponseGeneratorServices;
 
 /**
  * Created by nikilipa on 2/1/17.

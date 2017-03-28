@@ -2,7 +2,7 @@ package org.spring.soap2rest.rest.web.resources;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.spring.soap2rest.rest.impl.ResponseGeneratorServices;
+import org.spring.soap2rest.rest.impl.services.ResponseGeneratorServices;
 import org.spring.soap2rest.rest.web.RestResources;
 import org.spring.soap2rest.rest.web.RestRoles;
 import org.spring.soap2rest.rest.web.utils.ClientLogger;
@@ -44,6 +44,22 @@ public class SyncResource {
     @RolesAllowed(RestRoles.REST_ADMIN_ROLE)
     public String auth() {
         return "Sync Realm! Admin role.\n";
+    }
+
+    // http://localhost:8079/soap2rest/v1/rest/sync/message
+    @RequestMapping(
+            value = "/message",
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    @RolesAllowed(RestRoles.REST_ADMIN_ROLE)
+    @ClientLogger
+    public ResponseEntity getDatabaseResponse(HttpServletRequest request) { // @ClientLogger
+        log.info(String.format("Sync GET request was accepted."));
+
+        return ResponseEntity
+                .ok()
+                .body(responseGeneratorServices.getRandomDatabaseResponse());
     }
 
     /**

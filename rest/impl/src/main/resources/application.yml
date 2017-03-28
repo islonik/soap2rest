@@ -1,0 +1,26 @@
+liquibase:
+    context: production,test
+
+spring:
+    datasource:
+        dataSourceClassName: org.h2.jdbcx.JdbcDataSource
+        url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=false
+        databaseName:
+        serverName:
+        username: sa
+        password:
+
+    jpa:
+        database-platform: org.hibernate.dialect.H2Dialect
+        database: H2
+        openInView: false
+        show_sql: true
+        generate-ddl: false
+        hibernate:
+            ddl-auto: none
+            naming-strategy: org.hibernate.cfg.EJB3NamingStrategy
+        properties:
+            hibernate.cache.use_second_level_cache: false
+            hibernate.cache.use_query_cache: false
+            hibernate.generate_statistics: false
+            hibernate.hbm2ddl.auto: validate

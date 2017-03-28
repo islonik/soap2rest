@@ -1,4 +1,4 @@
-package org.spring.soap2rest.rest.impl;
+package org.spring.soap2rest.rest.impl.services;
 
 import org.spring.soap2rest.rest.api.model.AsyncRestRequest;
 import org.springframework.beans.factory.annotation.Autowired;

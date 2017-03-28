@@ -81,6 +81,8 @@ public class RestSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(RestResources.SYNC_SECURITY, RestResources.ASYNC_SECURITY).hasRole(RestRoles.REST_CLIENT_ROLE)
                 .and().httpBasic().realmName(RestRoles.S2R_REALM_NAME).authenticationEntryPoint(getBasicAuthEntryPoint())
                 .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+
+        http.headers().frameOptions().disable(); // disable security for h2
     }
 
     @Autowired
