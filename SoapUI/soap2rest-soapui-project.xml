@@ -103,7 +103,39 @@
       <soap:address location="http://XXX.nikilipa.org:8078/ws/DeliverService.v01.webService:DeliverServiceWS"/>
     </wsdl:port>
   </wsdl:service>
-</wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>http://XXX.nikilipa.org:8078/ws/DeliverService.v01.webService:DeliverServiceWS</con:endpoint></con:endpoints><con:operation id="b2a7b3d1-ca91-413b-ad60-95b9dfdea16b" isOneWay="false" action="DeliverServiceWS_Binder_handleRequest" name="handleRequest" bindingOperationName="handleRequest" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="60e95fdb-c2d3-4dca-b17a-480ad37cd5cf" name="test"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8077/soap2rest/soap/v1/DeliverServiceWS</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v01="http://www.nikilipa.org/SoapServiceRequest/v01" xmlns:v011="http://www.nikilipa.org/Common/MessageHeader/v01">
+</wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>http://XXX.nikilipa.org:8078/ws/DeliverService.v01.webService:DeliverServiceWS</con:endpoint></con:endpoints><con:operation id="b2a7b3d1-ca91-413b-ad60-95b9dfdea16b" isOneWay="false" action="DeliverServiceWS_Binder_handleRequest" name="handleRequest" bindingOperationName="handleRequest" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="b99a7103-ad27-4639-826c-04190cbfbe74" name="Async"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8077/soap2rest/soap/v1/DeliverServiceWS</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v01="http://www.nikilipa.org/SoapServiceRequest/v01" xmlns:v011="http://www.nikilipa.org/Common/MessageHeader/v01">
+   <soapenv:Header>
+        <wsse:Security xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
+            <wsse:UsernameToken wsu:Id="UsernameToken-EC9F7473E024359C6A14589178984712">
+            <wsse:Username>soap2rest</wsse:Username>
+            <wsse:Password>soap2rest</wsse:Password>
+            </wsse:UsernameToken>
+        </wsse:Security>
+   </soapenv:Header>
+   <soapenv:Body>
+      <v01:DSRequest>
+         <v01:Header>
+            <!--Optional:-->
+            <v011:messageId>test11</v011:messageId>
+            <!--Optional:-->
+            <v011:conversationId>test22</v011:conversationId>
+         </v01:Header>
+         <v01:Body>
+            <v01:ServiceOrder>
+               <v01:ServiceOrderID>Order-Async</v01:ServiceOrderID>
+               <v01:ServiceName>Async</v01:ServiceName>
+               <v01:ServiceType>Fast</v01:ServiceType>
+               <!--1 or more repetitions:-->
+               <v01:Params>
+                  <v011:key>PerformanceTime:Execution</v011:key>
+                  <v011:value>TRUE</v011:value>
+               </v01:Params>
+            </v01:ServiceOrder>
+            <v01:AsyncronousResponse>FALSE</v01:AsyncronousResponse>
+         </v01:Body>
+      </v01:DSRequest>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="DeliverServiceWS_Binder_handleRequest"/><con:wsrmConfig version="1.2"/></con:call><con:call id="fe33f3e8-385c-4e6b-b2a7-4ec9a03be89a" name="Multicast"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8077/soap2rest/soap/v1/DeliverServiceWS</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v01="http://www.nikilipa.org/SoapServiceRequest/v01" xmlns:v011="http://www.nikilipa.org/Common/MessageHeader/v01">
    <soapenv:Header>
         <wsse:Security xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
             <wsse:UsernameToken wsu:Id="UsernameToken-EC9F7473E024359C6A14589178984712">
@@ -123,7 +155,7 @@
          <v01:Body>
             <v01:ServiceOrder>
                <v01:ServiceOrderID>Order-Multicast</v01:ServiceOrderID>
-               <v01:ServiceName>Async</v01:ServiceName>
+               <v01:ServiceName>Multicast</v01:ServiceName>
                <v01:ServiceType>Fast</v01:ServiceType>
                <!--1 or more repetitions:-->
                <v01:Params>
@@ -135,4 +167,36 @@
          </v01:Body>
       </v01:DSRequest>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:credentials><con:username>soap2rest</con:username><con:password>soap2rest</con:password><con:selectedAuthProfile>No Authorization</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="DeliverServiceWS_Binder_handleRequest"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:properties/><con:wssContainer/><con:oAuth2ProfileContainer/><con:oAuth1ProfileContainer/><con:sensitiveInformation/></con:soapui-project>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="DeliverServiceWS_Binder_handleRequest"/><con:wsrmConfig version="1.2"/></con:call><con:call id="197e672d-7207-4e81-9917-51810b8e5a48" name="Sync"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8077/soap2rest/soap/v1/DeliverServiceWS</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v01="http://www.nikilipa.org/SoapServiceRequest/v01" xmlns:v011="http://www.nikilipa.org/Common/MessageHeader/v01">
+   <soapenv:Header>
+        <wsse:Security xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
+            <wsse:UsernameToken wsu:Id="UsernameToken-EC9F7473E024359C6A14589178984712">
+            <wsse:Username>soap2rest</wsse:Username>
+            <wsse:Password>soap2rest</wsse:Password>
+            </wsse:UsernameToken>
+        </wsse:Security>
+   </soapenv:Header>
+   <soapenv:Body>
+      <v01:DSRequest>
+         <v01:Header>
+            <!--Optional:-->
+            <v011:messageId>test11</v011:messageId>
+            <!--Optional:-->
+            <v011:conversationId>test22</v011:conversationId>
+         </v01:Header>
+         <v01:Body>
+            <v01:ServiceOrder>
+               <v01:ServiceOrderID>Order-Sync</v01:ServiceOrderID>
+               <v01:ServiceName>Sync</v01:ServiceName>
+               <v01:ServiceType>Fast</v01:ServiceType>
+               <!--1 or more repetitions:-->
+               <v01:Params>
+                  <v011:key>PerformanceTime:Execution</v011:key>
+                  <v011:value>TRUE</v011:value>
+               </v01:Params>
+            </v01:ServiceOrder>
+            <v01:AsyncronousResponse>FALSE</v01:AsyncronousResponse>
+         </v01:Body>
+      </v01:DSRequest>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="DeliverServiceWS_Binder_handleRequest"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:properties/><con:wssContainer/><con:oAuth2ProfileContainer/><con:oAuth1ProfileContainer/><con:sensitiveInformation/></con:soapui-project>
