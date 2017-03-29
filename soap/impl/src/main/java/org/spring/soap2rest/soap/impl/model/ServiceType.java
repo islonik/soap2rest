@@ -5,19 +5,27 @@ import org.spring.soap2rest.soap.impl.generated.ds.ws.ServiceOrder;
 /**
  * Created by nikilipa on 8/31/16.
  */
-public enum ServiceType {
+public class ServiceType {
 
-    FAST,
-    MEDIUM,
-    SLOW;
+    public static final String FAST = "Fast";
+    public static final String MEDIUM = "Medium";
+    public static final String SLOW = "Slow";
 
     private static final String UNKNOWN = "Unknown";
 
-    public static ServiceType valueOf(ServiceOrder serviceOrder) {
+    public static String valueOf(ServiceOrder serviceOrder) {
         String action = UNKNOWN;
         if (serviceOrder != null && serviceOrder.getServiceType() != null) {
             action = serviceOrder.getServiceType();
         }
-        return ServiceType.valueOf(action.toUpperCase().trim());
+        if (FAST.equalsIgnoreCase(action)) {
+            return FAST;
+        } else if (MEDIUM.equalsIgnoreCase(action)) {
+            return MEDIUM;
+        } else if (SLOW.equalsIgnoreCase(action)) {
+            return  SLOW;
+        } else {
+            throw new IllegalArgumentException(String.format("Unknown service type."));
+        }
     }
 }

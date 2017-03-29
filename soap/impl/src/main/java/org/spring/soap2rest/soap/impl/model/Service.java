@@ -12,13 +12,13 @@ public class Service {
 
     private final String id;
     private final String name;
-    private final ServiceType type;
+    private final String type;
     private final String messageId;
     private final String conversationId;
     private final Map<String, String> params;
     private final ConcurrentMap<String, String> optionalParams = new ConcurrentHashMap<>();
 
-    public Service(String id, String name, ServiceType type, String messageId, String conversationId, Map<String, String> params) {
+    public Service(String id, String name, String type, String messageId, String conversationId, Map<String, String> params) {
         this.id = id;
         this.name = name;
         this.type = type;
@@ -35,7 +35,7 @@ public class Service {
         return name;
     }
 
-    public ServiceType getType() {
+    public String getType() {
         return type;
     }
 

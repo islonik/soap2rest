@@ -32,6 +32,9 @@ public class SoapOrchestrator {
     @Autowired
     private RestServices restServices;
 
+    @Autowired
+    private GatewayServices gatewayServices;
+
     public DSResponse syncProcess(DSRequest dsRequest) {
         return process(dsRequest);
     }
@@ -50,8 +53,8 @@ public class SoapOrchestrator {
             Service service = parserServices.xml2service(dsRequest);
             //String endpoint = RouteServices.valueOf(service.getType(), service.getName());
 
-            ServiceOrderStatus sos = null;
-            if (service.getName().equalsIgnoreCase(RouteServices.SYNC)) {
+            ServiceOrderStatus sos = gatewayServices.route(service);
+            /*if (service.getName().equalsIgnoreCase(RouteServices.SYNC)) {
                 sos = restServices.sendGetRequest(service, "%s/sync/response");
             } else if (service.getName().equalsIgnoreCase(RouteServices.ASYNC)) {
                 sos = restServices.sendGetRequest(service, "%s/async/response");
@@ -65,7 +68,7 @@ public class SoapOrchestrator {
                 asyncRestRequest.setDesc(sos.getStatusType().getDesc());
 
                 sos = restServices.sendPutRequest(service, "%s/async/notify", asyncRestRequest);
-            }
+            }*/
             return parserServices.getDSResponse(dsRequest, sos);
         } /*catch (TimeoutException te) {
             return parserServices.getDSResponse(dsRequest, "504", te.getMessage());
