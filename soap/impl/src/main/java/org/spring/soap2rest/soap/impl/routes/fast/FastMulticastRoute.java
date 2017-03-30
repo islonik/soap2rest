@@ -21,10 +21,29 @@ public class FastMulticastRoute {
     @Autowired
     private MulticastLogic multicastLogic;
 
-    @ServiceActivator(inputChannel = RouteServices.FAST_MULTICAST_ID)
-    public ServiceOrderStatus processOrder(Service service) {
+    // outputChannel has a method name in ImplConfiguration
+    @ServiceActivator(inputChannel = RouteServices.FAST_MULTICAST_ID, outputChannel = "subscribeFast")
+    public Service processOrder(Service service) {
         log.info("FastMulticastRoute");
-        return multicastLogic.fast(service);
+        return service;
+    }
+
+    @ServiceActivator(inputChannel = "fastChannel1", outputChannel = "aggregatorChannel")
+    public ServiceOrderStatus get1(Service service) {
+        log.info("fast1");
+        return multicastLogic.executeGet(service);
+    }
+
+    @ServiceActivator(inputChannel = "fastChannel2", outputChannel = "aggregatorChannel")
+    public ServiceOrderStatus get2(Service service) {
+        log.info("fast2");
+        return multicastLogic.executeGet(service);
+    }
+
+    @ServiceActivator(inputChannel = "fastChannel3", outputChannel = "aggregatorChannel")
+    public ServiceOrderStatus get3(Service service) {
+        log.info("fast3");
+        return multicastLogic.executeGet(service);
     }
 
 }

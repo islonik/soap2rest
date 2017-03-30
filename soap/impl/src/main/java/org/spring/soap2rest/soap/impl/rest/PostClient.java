@@ -3,6 +3,9 @@ package org.spring.soap2rest.soap.impl.rest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -30,7 +33,10 @@ public class PostClient {
 
         log.info(String.format("PUT request '%s' to S2R.rest:%n%s%n%s", messageId, endpoint, object));
 
-        String postResponse = restTemplate.postForObject(endpoint, object, String.class);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<String> httpEntity = new HttpEntity<>(object, headers);
+        String postResponse = restTemplate.postForObject(endpoint, httpEntity, String.class);
 
         log.info(String.format("PUT response '%s' from S2R.rest:%n%s", messageId, postResponse));
 

@@ -1,5 +1,6 @@
 package org.spring.soap2rest.soap.impl.routes.medium;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.spring.soap2rest.soap.impl.generated.ds.ws.ServiceOrderStatus;
@@ -21,10 +22,28 @@ public class MediumMulticastRoute {
     @Autowired
     private MulticastLogic multicastLogic;
 
-    @ServiceActivator(inputChannel = RouteServices.MEDIUM_MULTICAST_ID)
-    public ServiceOrderStatus processOrder(Service service) {
+    @ServiceActivator(inputChannel = RouteServices.MEDIUM_MULTICAST_ID, outputChannel = "subscribeMedium")
+    public Service processOrder(Service service) {
         log.info("MediumMulticastRoute");
-        return multicastLogic.medium(service);
+        return service;
+    }
+
+    @ServiceActivator(inputChannel = "mediumChannel1", outputChannel = "aggregatorChannel")
+    public ServiceOrderStatus get1(Service service) throws JsonProcessingException {
+        log.info("medium1");
+        return multicastLogic.executePost(service);
+    }
+
+    @ServiceActivator(inputChannel = "mediumChannel2", outputChannel = "aggregatorChannel")
+    public ServiceOrderStatus get2(Service service) throws JsonProcessingException {
+        log.info("medium2");
+        return multicastLogic.executeGet(service);
+    }
+
+    @ServiceActivator(inputChannel = "mediumChannel3", outputChannel = "aggregatorChannel")
+    public ServiceOrderStatus get3(Service service) throws JsonProcessingException {
+        log.info("medium3");
+        return multicastLogic.executeGet(service);
     }
 
 }

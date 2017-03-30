@@ -37,7 +37,7 @@ public abstract class AbstractLogic implements FastLogic, MediumLogic, SlowLogic
         this.restServices = restServices;
     }
 
-    public void setUpPerformanceMetrics(Service service, ServiceOrderStatus serviceOrderStatus, String result) {
+    public static void setUpPerformanceMetrics(Service service, final ServiceOrderStatus serviceOrderStatus, String result) {
         Optional.ofNullable(service.getParams().get(KEY_PERFORMANCE_EXECUTION)).ifPresent(value -> {
             boolean isExecutionMetric = Boolean.valueOf(value);
 

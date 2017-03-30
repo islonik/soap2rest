@@ -21,10 +21,28 @@ public class SlowMulticastRoute {
     @Autowired
     private MulticastLogic multicastLogic;
 
-    @ServiceActivator(inputChannel = RouteServices.SLOW_MULTICAST_ID)
-    public ServiceOrderStatus processOrder(Service service) {
+    @ServiceActivator(inputChannel = RouteServices.SLOW_MULTICAST_ID, outputChannel = "subscribeSlow")
+    public Service processOrder(Service service) {
         log.info("SlowMulticastRoute");
-        return multicastLogic.slow(service);
+        return service;
+    }
+
+    @ServiceActivator(inputChannel = "slowChannel1", outputChannel = "aggregatorChannel")
+    public ServiceOrderStatus get1(Service service) {
+        log.info("slow1");
+        return multicastLogic.executeGet(service);
+    }
+
+    @ServiceActivator(inputChannel = "slowChannel2", outputChannel = "aggregatorChannel")
+    public ServiceOrderStatus get2(Service service) {
+        log.info("slow2");
+        return multicastLogic.executeGet(service);
+    }
+
+    @ServiceActivator(inputChannel = "slowChannel3", outputChannel = "aggregatorChannel")
+    public ServiceOrderStatus get3(Service service) {
+        log.info("slow3");
+        return multicastLogic.executeGet(service);
     }
 
 }

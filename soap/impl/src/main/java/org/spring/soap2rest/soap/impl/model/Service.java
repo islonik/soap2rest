@@ -1,5 +1,6 @@
 package org.spring.soap2rest.soap.impl.model;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -8,7 +9,7 @@ import java.util.concurrent.ConcurrentMap;
 /**
  * Created by nikilipa on 2/15/17.
  */
-public class Service {
+public class Service implements Serializable {
 
     private final String id;
     private final String name;

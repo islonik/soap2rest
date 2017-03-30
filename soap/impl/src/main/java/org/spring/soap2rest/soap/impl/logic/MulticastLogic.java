@@ -7,6 +7,8 @@ import org.spring.soap2rest.soap.impl.model.Service;
 import org.spring.soap2rest.soap.impl.services.ParserServices;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 /**
  * Created by nikilipa on 2/15/17.
  */
@@ -54,17 +56,14 @@ public class MulticastLogic extends AbstractLogic {
         return sos;
     }
 
-    public ServiceOrderStatus chooseBetweenEntities(Service service, String message, ServiceOrderStatus... sosList) {
-        if (sosList != null) {
-            for (ServiceOrderStatus sos : sosList) {
-                if (!sos.getStatusType().getCode().equals(ParserServices.CODE_OK)) {
-                    setUpPerformanceMetrics(service, sos, message);
-                    return sos;
-                }
+    public static ServiceOrderStatus chooseBetweenEntities(List<ServiceOrderStatus> sosList) {
+        for (ServiceOrderStatus sos : sosList) {
+            if (!sos.getStatusType().getCode().equals(ParserServices.CODE_OK)) {
+                return sos;
             }
-            ServiceOrderStatus sos = sosList[0];
-            setUpPerformanceMetrics(service, sos, message);
-            return sos;
+        }
+        if (!sosList.isEmpty()) {
+            return sosList.get(0);
         }
         return null;
     }
