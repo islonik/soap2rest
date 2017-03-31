@@ -19,28 +19,33 @@ public class MediumMulticastRoute {
 
     private static final Logger log = LoggerFactory.getLogger(MediumMulticastRoute.class);
 
+    public static final String SUBSCRIBE_MEDIUM = "subscribeMedium";
+    public static final String MEDIUM_CHAHHEL_1 = "mediumChannel1";
+    public static final String MEDIUM_CHAHHEL_2 = "mediumChannel2";
+    public static final String MEDIUM_CHAHHEL_3 = "mediumChannel3";
+
     @Autowired
     private MulticastLogic multicastLogic;
 
-    @ServiceActivator(inputChannel = RouteServices.MEDIUM_MULTICAST_ID, outputChannel = "subscribeMedium")
+    @ServiceActivator(inputChannel = RouteServices.MEDIUM_MULTICAST_ID, outputChannel = SUBSCRIBE_MEDIUM)
     public Service processOrder(Service service) {
         log.info("MediumMulticastRoute");
         return service;
     }
 
-    @ServiceActivator(inputChannel = "mediumChannel1", outputChannel = "aggregatorChannel")
+    @ServiceActivator(inputChannel = MEDIUM_CHAHHEL_1, outputChannel = MulticastLogic.AGGREGATE_CHANNEL)
     public ServiceOrderStatus get1(Service service) throws JsonProcessingException {
         log.info("medium1");
         return multicastLogic.executePost(service);
     }
 
-    @ServiceActivator(inputChannel = "mediumChannel2", outputChannel = "aggregatorChannel")
+    @ServiceActivator(inputChannel = MEDIUM_CHAHHEL_2, outputChannel = MulticastLogic.AGGREGATE_CHANNEL)
     public ServiceOrderStatus get2(Service service) throws JsonProcessingException {
         log.info("medium2");
         return multicastLogic.executeGet(service);
     }
 
-    @ServiceActivator(inputChannel = "mediumChannel3", outputChannel = "aggregatorChannel")
+    @ServiceActivator(inputChannel = MEDIUM_CHAHHEL_3, outputChannel = MulticastLogic.AGGREGATE_CHANNEL)
     public ServiceOrderStatus get3(Service service) throws JsonProcessingException {
         log.info("medium3");
         return multicastLogic.executeGet(service);

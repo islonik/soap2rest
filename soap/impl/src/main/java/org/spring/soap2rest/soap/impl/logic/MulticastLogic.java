@@ -15,6 +15,8 @@ import java.util.List;
 @Component
 public class MulticastLogic extends AbstractLogic {
 
+    public static final String AGGREGATE_CHANNEL = "aggregatorChannel";
+
     @Override
     public ServiceOrderStatus fast(Service service) {
         throw new IllegalArgumentException("Don't invoke 'fast' method from Multicast!");

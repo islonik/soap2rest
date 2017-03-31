@@ -1,8 +1,10 @@
 package org.spring.soap2rest.soap.impl;
 
-import com.google.common.util.concurrent.Uninterruptibles;
 import org.spring.soap2rest.soap.impl.generated.ds.ws.ServiceOrderStatus;
 import org.spring.soap2rest.soap.impl.logic.MulticastLogic;
+import org.spring.soap2rest.soap.impl.routes.fast.FastMulticastRoute;
+import org.spring.soap2rest.soap.impl.routes.medium.MediumMulticastRoute;
+import org.spring.soap2rest.soap.impl.routes.slow.SlowMulticastRoute;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
@@ -47,15 +49,15 @@ public class ImplConfiguration {
         final Executor executor = executor();
 
         return IntegrationFlows
-                .from("subscribeFast")
+                .from(FastMulticastRoute.SUBSCRIBE_FAST)
                 .publishSubscribeChannel(executor, s -> s
                         .applySequence(true)
                         .subscribe(f -> f
-                                .channel("fastChannel1"))
+                                .channel(FastMulticastRoute.FAST_CHAHHEL_1))
                         .subscribe(f -> f
-                                .channel("fastChannel2"))
+                                .channel(FastMulticastRoute.FAST_CHAHHEL_2))
                         .subscribe(f -> f
-                                .channel("fastChannel3"))
+                                .channel(FastMulticastRoute.FAST_CHAHHEL_3))
                 )
                 .get();
 
@@ -66,15 +68,15 @@ public class ImplConfiguration {
         final Executor executor = executor();
 
         return IntegrationFlows
-                .from("subscribeMedium")
+                .from(MediumMulticastRoute.SUBSCRIBE_MEDIUM)
                 .publishSubscribeChannel(executor, s -> s
                         .applySequence(true)
                         .subscribe(f -> f
-                                .channel("mediumChannel1"))
+                                .channel(MediumMulticastRoute.MEDIUM_CHAHHEL_1))
                         .subscribe(f -> f
-                                .channel("mediumChannel2"))
+                                .channel(MediumMulticastRoute.MEDIUM_CHAHHEL_2))
                         .subscribe(f -> f
-                                .channel("mediumChannel3"))
+                                .channel(MediumMulticastRoute.MEDIUM_CHAHHEL_3))
                 )
                 .get();
 
@@ -85,15 +87,15 @@ public class ImplConfiguration {
         final Executor executor = executor();
 
         return IntegrationFlows
-                .from("subscribeSlow")
+                .from(SlowMulticastRoute.SUBSCRIBE_SLOW)
                 .publishSubscribeChannel(executor, s -> s
                         .applySequence(true)
                         .subscribe(f -> f
-                                .channel("slowChannel1"))
+                                .channel(SlowMulticastRoute.SLOW_CHAHHEL_1))
                         .subscribe(f -> f
-                                .channel("slowChannel2"))
+                                .channel(SlowMulticastRoute.SLOW_CHAHHEL_2))
                         .subscribe(f -> f
-                                .channel("slowChannel3"))
+                                .channel(SlowMulticastRoute.SLOW_CHAHHEL_3))
                 )
                 .get();
 
@@ -102,7 +104,7 @@ public class ImplConfiguration {
     @Bean
     public IntegrationFlow aggregateFastFlow() {
         return IntegrationFlows
-                .from("aggregatorChannel")
+                .from(MulticastLogic.AGGREGATE_CHANNEL)
                 .aggregate(a -> a
                         .outputProcessor(g -> {
                             return MulticastLogic.chooseBetweenEntities(

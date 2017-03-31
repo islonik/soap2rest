@@ -18,29 +18,34 @@ public class FastMulticastRoute {
 
     private static final Logger log = LoggerFactory.getLogger(FastMulticastRoute.class);
 
+    public static final String SUBSCRIBE_FAST = "subscribeFast";
+    public static final String FAST_CHAHHEL_1 = "fastChannel1";
+    public static final String FAST_CHAHHEL_2 = "fastChannel2";
+    public static final String FAST_CHAHHEL_3 = "fastChannel3";
+
     @Autowired
     private MulticastLogic multicastLogic;
 
     // outputChannel has a method name in ImplConfiguration
-    @ServiceActivator(inputChannel = RouteServices.FAST_MULTICAST_ID, outputChannel = "subscribeFast")
+    @ServiceActivator(inputChannel = RouteServices.FAST_MULTICAST_ID, outputChannel = SUBSCRIBE_FAST)
     public Service processOrder(Service service) {
         log.info("FastMulticastRoute");
         return service;
     }
 
-    @ServiceActivator(inputChannel = "fastChannel1", outputChannel = "aggregatorChannel")
+    @ServiceActivator(inputChannel = FAST_CHAHHEL_1, outputChannel = MulticastLogic.AGGREGATE_CHANNEL)
     public ServiceOrderStatus get1(Service service) {
         log.info("fast1");
         return multicastLogic.executeGet(service);
     }
 
-    @ServiceActivator(inputChannel = "fastChannel2", outputChannel = "aggregatorChannel")
+    @ServiceActivator(inputChannel = FAST_CHAHHEL_2, outputChannel = MulticastLogic.AGGREGATE_CHANNEL)
     public ServiceOrderStatus get2(Service service) {
         log.info("fast2");
         return multicastLogic.executeGet(service);
     }
 
-    @ServiceActivator(inputChannel = "fastChannel3", outputChannel = "aggregatorChannel")
+    @ServiceActivator(inputChannel = FAST_CHAHHEL_3, outputChannel = MulticastLogic.AGGREGATE_CHANNEL)
     public ServiceOrderStatus get3(Service service) {
         log.info("fast3");
         return multicastLogic.executeGet(service);

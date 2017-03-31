@@ -18,28 +18,33 @@ public class SlowMulticastRoute {
 
     private static final Logger log = LoggerFactory.getLogger(SlowMulticastRoute.class);
 
+    public static final String SUBSCRIBE_SLOW = "subscribeSlow";
+    public static final String SLOW_CHAHHEL_1 = "slowChannel1";
+    public static final String SLOW_CHAHHEL_2 = "slowChannel2";
+    public static final String SLOW_CHAHHEL_3 = "slowChannel3";
+
     @Autowired
     private MulticastLogic multicastLogic;
 
-    @ServiceActivator(inputChannel = RouteServices.SLOW_MULTICAST_ID, outputChannel = "subscribeSlow")
+    @ServiceActivator(inputChannel = RouteServices.SLOW_MULTICAST_ID, outputChannel = SUBSCRIBE_SLOW)
     public Service processOrder(Service service) {
         log.info("SlowMulticastRoute");
         return service;
     }
 
-    @ServiceActivator(inputChannel = "slowChannel1", outputChannel = "aggregatorChannel")
+    @ServiceActivator(inputChannel = SLOW_CHAHHEL_1, outputChannel = MulticastLogic.AGGREGATE_CHANNEL)
     public ServiceOrderStatus get1(Service service) {
         log.info("slow1");
         return multicastLogic.executeGet(service);
     }
 
-    @ServiceActivator(inputChannel = "slowChannel2", outputChannel = "aggregatorChannel")
+    @ServiceActivator(inputChannel = SLOW_CHAHHEL_2, outputChannel = MulticastLogic.AGGREGATE_CHANNEL)
     public ServiceOrderStatus get2(Service service) {
         log.info("slow2");
         return multicastLogic.executeGet(service);
     }
 
-    @ServiceActivator(inputChannel = "slowChannel3", outputChannel = "aggregatorChannel")
+    @ServiceActivator(inputChannel = SLOW_CHAHHEL_3, outputChannel = MulticastLogic.AGGREGATE_CHANNEL)
     public ServiceOrderStatus get3(Service service) {
         log.info("slow3");
         return multicastLogic.executeGet(service);
