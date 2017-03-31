@@ -28,16 +28,19 @@ public class GetClient {
                 .build();
 
         String messageId = getMessageId();
-
+        String getResponse = null;
         try {
             log.info(String.format("GET request '%s' to S2R.rest:%n%s", messageId, endpoint));
-
-            String getResponse = restTemplate.getForObject(endpoint, String.class);
-
+            getResponse = restTemplate.getForObject(endpoint, String.class);
+        } catch (HttpClientErrorException rce) {
+            getResponse = String.format(String.format(
+                    "<code>%s</code><body>%s</body>",
+                    rce.getStatusCode(),
+                    rce.getStatusCode().getReasonPhrase()
+            ));
+        } finally {
             log.info(String.format("GET response '%s' from S2R.rest:%n%s", messageId, getResponse));
             return getResponse;
-        } catch (HttpClientErrorException rce) {
-            return String.format(String.format("<code>%s</code><body>%s</body>", rce.getStatusCode(), rce.getStatusCode().getReasonPhrase()));
         }
     }
 

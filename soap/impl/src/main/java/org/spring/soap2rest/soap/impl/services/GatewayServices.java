@@ -8,7 +8,7 @@ import org.springframework.integration.annotation.MessagingGateway;
 /**
  * Created by nikilipa on 3/29/17.
  */
-@MessagingGateway
+@MessagingGateway(defaultReplyTimeout = "10000")
 public interface GatewayServices {
 
     String DEFAULT_CHANNEL = "pipeline";

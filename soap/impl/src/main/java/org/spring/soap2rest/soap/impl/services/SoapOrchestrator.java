@@ -13,6 +13,8 @@ import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.concurrent.TimeoutException;
+
 /**
  * Created by nikilipa on 8/13/16.
  */
@@ -21,17 +23,11 @@ public class SoapOrchestrator {
 
     private static final Logger log = LoggerFactory.getLogger(SoapOrchestrator.class);
 
-    public static final Long SYNC_TIMEOUT = 12L; // sec
-    public static final Long ASYNC_TIMEOUT = 5L; // min
-
     @Autowired
     private JsonServices jsonServices;
 
     @Autowired
     private ParserServices parserServices;
-
-    @Autowired
-    private RestServices restServices;
 
     @Autowired
     private GatewayServices gatewayServices;
@@ -55,8 +51,11 @@ public class SoapOrchestrator {
 
             ServiceOrderStatus sos = gatewayServices.route(service);
 
+            if (sos == null) { // defaultReplyTimeout means null from route method
+                throw new TimeoutException("Gateway timeout");
+            }
             return parserServices.getDSResponse(dsRequest, sos);
-        } catch (IllegalArgumentException | NoSuchBeanDefinitionException e) {
+        } catch (IllegalArgumentException | NoSuchBeanDefinitionException | TimeoutException e) {
             log.warn(e.getMessage());
             return parserServices.getDSResponse(dsRequest, "500", e.getMessage());
         } catch (Exception e) {

@@ -34,17 +34,20 @@ public class PutClient {
         RequestEntity re = RequestEntity.put(URI.create(endpoint)).body(asyncRestRequest);
 
         String messageId = getMessageId();
-
+        String putResponse = null;
         try {
             log.info(String.format("PUT request '%s' to S2R.rest:%n%s%n%s", messageId, endpoint, asyncRestRequest));
-
             ResponseEntity<String> response = restTemplate.exchange(re, String.class);
-
-            log.info(String.format("PUT response '%s' from S2R.rest:%n%s", messageId, response.getBody()));
-
-            return response.getBody();
+            putResponse = response.getBody();
         } catch (HttpClientErrorException rce) {
-            return String.format(String.format("<code>%s</code><body>%s</body>", rce.getStatusCode(), rce.getStatusCode().getReasonPhrase()));
+            putResponse = String.format(String.format(
+                    "<code>%s</code><body>%s</body>",
+                    rce.getStatusCode(),
+                    rce.getStatusCode().getReasonPhrase()
+            ));
+        } finally {
+            log.info(String.format("PUT response '%s' from S2R.rest:%n%s", messageId, putResponse));
+            return putResponse;
         }
     }
 }

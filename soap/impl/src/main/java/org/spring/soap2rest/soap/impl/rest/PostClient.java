@@ -31,20 +31,23 @@ public class PostClient {
                 .build();
 
         String messageId = getMessageId();
-
+        String postResponse = null;
         try {
-            log.info(String.format("PUT request '%s' to S2R.rest:%n%s%n%s", messageId, endpoint, object));
+            log.info(String.format("POST request '%s' to S2R.rest:%n%s%n%s", messageId, endpoint, object));
 
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
             HttpEntity<String> httpEntity = new HttpEntity<>(object, headers);
-            String postResponse = restTemplate.postForObject(endpoint, httpEntity, String.class);
-
-            log.info(String.format("PUT response '%s' from S2R.rest:%n%s", messageId, postResponse));
-
-            return postResponse;
+            postResponse = restTemplate.postForObject(endpoint, httpEntity, String.class);
         } catch (HttpClientErrorException rce) {
-            return String.format(String.format("<code>%s</code><body>%s</body>", rce.getStatusCode(), rce.getStatusCode().getReasonPhrase()));
+            postResponse = String.format(String.format(
+                    "<code>%s</code><body>%s</body>",
+                    rce.getStatusCode(),
+                    rce.getStatusCode().getReasonPhrase()
+            ));
+        } finally {
+            log.info(String.format("POST response '%s' from S2R.rest:%n%s", messageId, postResponse));
+            return postResponse;
         }
     }
 
