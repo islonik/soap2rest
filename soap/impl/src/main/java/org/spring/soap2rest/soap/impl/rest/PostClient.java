@@ -13,9 +13,9 @@ import org.springframework.web.client.RestTemplate;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Service
-public class PostClient {
+public class PostClient implements RestClient {
 
-    private final Logger log = LoggerFactory.getLogger(PutClient.class);
+    private final Logger log = LoggerFactory.getLogger(PostClient.class);
 
     private static final AtomicLong postCounter = new AtomicLong();
 
@@ -40,11 +40,7 @@ public class PostClient {
             HttpEntity<String> httpEntity = new HttpEntity<>(object, headers);
             postResponse = restTemplate.postForObject(endpoint, httpEntity, String.class);
         } catch (HttpClientErrorException rce) {
-            postResponse = String.format(String.format(
-                    "<code>%s</code><body>%s</body>",
-                    rce.getStatusCode(),
-                    rce.getStatusCode().getReasonPhrase()
-            ));
+            postResponse = error(rce);
         } finally {
             log.info(String.format("POST response '%s' from S2R.rest:%n%s", messageId, postResponse));
             return postResponse;

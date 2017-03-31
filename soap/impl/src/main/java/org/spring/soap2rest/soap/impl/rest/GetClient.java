@@ -10,9 +10,9 @@ import org.springframework.web.client.RestTemplate;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Service
-public class GetClient {
+public class GetClient implements RestClient {
 
-    private final Logger log = LoggerFactory.getLogger(PutClient.class);
+    private final Logger log = LoggerFactory.getLogger(GetClient.class);
 
     private static final AtomicLong getCounter = new AtomicLong();
 
@@ -33,11 +33,7 @@ public class GetClient {
             log.info(String.format("GET request '%s' to S2R.rest:%n%s", messageId, endpoint));
             getResponse = restTemplate.getForObject(endpoint, String.class);
         } catch (HttpClientErrorException rce) {
-            getResponse = String.format(String.format(
-                    "<code>%s</code><body>%s</body>",
-                    rce.getStatusCode(),
-                    rce.getStatusCode().getReasonPhrase()
-            ));
+            getResponse = error(rce);
         } finally {
             log.info(String.format("GET response '%s' from S2R.rest:%n%s", messageId, getResponse));
             return getResponse;

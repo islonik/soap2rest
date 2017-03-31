@@ -14,7 +14,7 @@ import java.net.URI;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Service
-public class PutClient {
+public class PutClient implements RestClient {
 
     private final Logger log = LoggerFactory.getLogger(PutClient.class);
 
@@ -40,11 +40,7 @@ public class PutClient {
             ResponseEntity<String> response = restTemplate.exchange(re, String.class);
             putResponse = response.getBody();
         } catch (HttpClientErrorException rce) {
-            putResponse = String.format(String.format(
-                    "<code>%s</code><body>%s</body>",
-                    rce.getStatusCode(),
-                    rce.getStatusCode().getReasonPhrase()
-            ));
+            putResponse = error(rce);
         } finally {
             log.info(String.format("PUT response '%s' from S2R.rest:%n%s", messageId, putResponse));
             return putResponse;
