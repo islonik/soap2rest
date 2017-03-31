@@ -56,8 +56,10 @@ public class AsyncResource {
 
     @GET
     @Produces({MediaType.APPLICATION_JSON})
-    @Path("{subResources:.*}")
+    //@Path("{subResources:.*}") - we can't use this expression in new resteasy because: RESTEASY002142
+    @Path("{subResources:(?!about|response|notify|timeout)(.*)}")
     public Response getAbort() {
+        log.info("getAbort");
         return Response
                 .ok(responseGeneratorServices.getSimpleJsonError(
                         Integer.toString(HttpURLConnection.HTTP_BAD_REQUEST),
@@ -70,6 +72,7 @@ public class AsyncResource {
     @Produces({MediaType.APPLICATION_JSON})
     @Path("/about")
     public Response getAbout() {
+        log.info("getAbout");
         return Response
                 .ok("Async Realm v1\n")
                 .build();

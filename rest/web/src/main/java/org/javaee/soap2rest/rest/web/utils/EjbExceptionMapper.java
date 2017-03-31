@@ -10,7 +10,7 @@ import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
 @Provider
-public class EjbExceptionHandler implements ExceptionMapper<EJBException> {
+public class EjbExceptionMapper implements ExceptionMapper<EJBException> {
 
     @Inject
     private ResponseGeneratorServices responseService;
