@@ -9,6 +9,7 @@ import org.spring.soap2rest.soap.impl.generated.ds.ws.DSResponse;
 import org.spring.soap2rest.soap.impl.generated.ds.ws.ServiceOrderStatus;
 import org.spring.soap2rest.soap.impl.model.Service;
 import org.spring.soap2rest.utils.services.JsonServices;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -51,28 +52,14 @@ public class SoapOrchestrator {
     private DSResponse process(DSRequest dsRequest) {
         try {
             Service service = parserServices.xml2service(dsRequest);
-            //String endpoint = RouteServices.valueOf(service.getType(), service.getName());
 
             ServiceOrderStatus sos = gatewayServices.route(service);
-            /*if (service.getName().equalsIgnoreCase(RouteServices.SYNC)) {
-                sos = restServices.sendGetRequest(service, "%s/sync/response");
-            } else if (service.getName().equalsIgnoreCase(RouteServices.ASYNC)) {
-                sos = restServices.sendGetRequest(service, "%s/async/response");
-            } else {
-                sos = restServices.sendGetRequest(service, "%s/async/response");
 
-                AsyncRestRequest asyncRestRequest = new AsyncRestRequest();
-                asyncRestRequest.setMessageId(dsRequest.getHeader().getMessageId());
-                asyncRestRequest.setConversationId(dsRequest.getHeader().getConversationId());
-                asyncRestRequest.setCode(sos.getStatusType().getCode());
-                asyncRestRequest.setDesc(sos.getStatusType().getDesc());
-
-                sos = restServices.sendPutRequest(service, "%s/async/notify", asyncRestRequest);
-            }*/
             return parserServices.getDSResponse(dsRequest, sos);
-        } /*catch (TimeoutException te) {
-            return parserServices.getDSResponse(dsRequest, "504", te.getMessage());
-        } */catch (Exception e) {
+        } catch (IllegalArgumentException | NoSuchBeanDefinitionException e) {
+            log.warn(e.getMessage());
+            return parserServices.getDSResponse(dsRequest, "500", e.getMessage());
+        } catch (Exception e) {
             log.error(e.getMessage(), e);
             return parserServices.getDSResponse(dsRequest, "500", e.getMessage());
         }

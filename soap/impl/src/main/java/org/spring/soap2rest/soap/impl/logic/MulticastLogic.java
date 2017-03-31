@@ -32,10 +32,18 @@ public class MulticastLogic extends AbstractLogic {
         throw new IllegalArgumentException("Don't invoke 'slow' method from Multicast!");
     }
 
-    public ServiceOrderStatus executeGet(Service service) {
+    public ServiceOrderStatus executeSyncGet(Service service) {
         ServiceOrderStatus sos = restServices.sendGetRequest(
                 service,
                 "%s/sync/response"
+        );
+        return sos;
+    }
+
+    public ServiceOrderStatus executeAsyncGet(Service service) {
+        ServiceOrderStatus sos = restServices.sendGetRequest(
+                service,
+                "%s/async/response"
         );
         return sos;
     }
@@ -54,6 +62,14 @@ public class MulticastLogic extends AbstractLogic {
                 service,
                 "%s/sync/response",
                 jsonServices.objectToJson(service.getParams())
+        );
+        return sos;
+    }
+
+    public ServiceOrderStatus executeTimeout(Service service) {
+        ServiceOrderStatus sos = restServices.sendGetRequest(
+                service,
+                "%s/async/timeout"
         );
         return sos;
     }

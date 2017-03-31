@@ -22,6 +22,8 @@ import java.util.Optional;
 @Component
 public class RestServices {
 
+    public static final String HTTP_TEMPLATE = "";
+
     @Autowired
     private JsonServices jsonServices;
 
@@ -93,8 +95,12 @@ public class RestServices {
                 message = ParserServices.MESSAGE_SUCCESS;
             }
         } else { // html code
+            Optional<String> codeError = parserServices.getHtmlCodeContent(httpResponse);
             Optional<String> htmlError = parserServices.getHtmlBodyContent(httpResponse);
-            if (htmlError.isPresent()) {
+            if (codeError.isPresent() && htmlError.isPresent()) {
+                code = codeError.get();
+                message = htmlError.get();
+            } else if (htmlError.isPresent()) {
                 code = ParserServices.CODE_BAD;
                 message = htmlError.get();
             } else {

@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.concurrent.atomic.AtomicLong;
@@ -28,13 +29,16 @@ public class GetClient {
 
         String messageId = getMessageId();
 
-        log.info(String.format("GET request '%s' to S2R.rest:%n%s", messageId, endpoint));
+        try {
+            log.info(String.format("GET request '%s' to S2R.rest:%n%s", messageId, endpoint));
 
-        String getResponse = restTemplate.getForObject(endpoint, String.class);
+            String getResponse = restTemplate.getForObject(endpoint, String.class);
 
-        log.info(String.format("GET response '%s' from S2R.rest:%n%s", messageId, getResponse));
-
-        return getResponse;
+            log.info(String.format("GET response '%s' from S2R.rest:%n%s", messageId, getResponse));
+            return getResponse;
+        } catch (HttpClientErrorException rce) {
+            return String.format(String.format("<code>%s</code><body>%s</body>", rce.getStatusCode(), rce.getStatusCode().getReasonPhrase()));
+        }
     }
 
 }

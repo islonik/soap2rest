@@ -42,13 +42,13 @@ public class MediumMulticastRoute {
     @ServiceActivator(inputChannel = MEDIUM_CHAHHEL_2, outputChannel = MulticastLogic.AGGREGATE_CHANNEL)
     public ServiceOrderStatus get2(Service service) throws JsonProcessingException {
         log.info("medium2");
-        return multicastLogic.executeGet(service);
+        return multicastLogic.executeAsyncGet(service);
     }
 
     @ServiceActivator(inputChannel = MEDIUM_CHAHHEL_3, outputChannel = MulticastLogic.AGGREGATE_CHANNEL)
     public ServiceOrderStatus get3(Service service) throws JsonProcessingException {
         log.info("medium3");
-        return multicastLogic.executeGet(service);
+        return multicastLogic.executeAsyncGet(service);
     }
 
 }

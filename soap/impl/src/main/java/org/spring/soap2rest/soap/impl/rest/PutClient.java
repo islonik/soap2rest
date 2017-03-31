@@ -7,6 +7,7 @@ import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
@@ -34,12 +35,16 @@ public class PutClient {
 
         String messageId = getMessageId();
 
-        log.info(String.format("PUT request '%s' to S2R.rest:%n%s%n%s", messageId, endpoint, asyncRestRequest));
+        try {
+            log.info(String.format("PUT request '%s' to S2R.rest:%n%s%n%s", messageId, endpoint, asyncRestRequest));
 
-        ResponseEntity<String> response = restTemplate.exchange(re, String.class);
+            ResponseEntity<String> response = restTemplate.exchange(re, String.class);
 
-        log.info(String.format("PUT response '%s' from S2R.rest:%n%s", messageId, response.getBody()));
+            log.info(String.format("PUT response '%s' from S2R.rest:%n%s", messageId, response.getBody()));
 
-        return response.getBody();
+            return response.getBody();
+        } catch (HttpClientErrorException rce) {
+            return String.format(String.format("<code>%s</code><body>%s</body>", rce.getStatusCode(), rce.getStatusCode().getReasonPhrase()));
+        }
     }
 }

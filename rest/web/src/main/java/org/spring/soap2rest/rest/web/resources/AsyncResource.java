@@ -37,7 +37,7 @@ public class AsyncResource {
 
     private static final Logger log = LoggerFactory.getLogger(AsyncResource.class);
 
-    private static final long TIMEOUT = 500; // ms
+    private static final long TIMEOUT = 1500; // ms
 
     @Autowired
     private ValidationServices validationServices;

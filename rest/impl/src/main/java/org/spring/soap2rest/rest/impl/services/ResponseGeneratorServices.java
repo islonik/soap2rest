@@ -63,6 +63,17 @@ public class ResponseGeneratorServices {
         }
     }
 
+    public String getSuccessResponse() {
+        try {
+            RestResponse restResponse = new RestResponse();
+            restResponse.setStatus("SUCCESS");
+            return jsonServices.objectToJson(restResponse);
+        } catch (JsonProcessingException e) {
+            log.error(e.getMessage(), e);
+            return getSimpleJsonError(e);
+        }
+    }
+
     public String getSimpleJsonError(Exception e) {
         return getSimpleJsonError("500", e.getMessage());
     }

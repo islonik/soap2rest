@@ -7,6 +7,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.concurrent.atomic.AtomicLong;
@@ -31,16 +32,20 @@ public class PostClient {
 
         String messageId = getMessageId();
 
-        log.info(String.format("PUT request '%s' to S2R.rest:%n%s%n%s", messageId, endpoint, object));
+        try {
+            log.info(String.format("PUT request '%s' to S2R.rest:%n%s%n%s", messageId, endpoint, object));
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<String> httpEntity = new HttpEntity<>(object, headers);
-        String postResponse = restTemplate.postForObject(endpoint, httpEntity, String.class);
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            HttpEntity<String> httpEntity = new HttpEntity<>(object, headers);
+            String postResponse = restTemplate.postForObject(endpoint, httpEntity, String.class);
 
-        log.info(String.format("PUT response '%s' from S2R.rest:%n%s", messageId, postResponse));
+            log.info(String.format("PUT response '%s' from S2R.rest:%n%s", messageId, postResponse));
 
-        return postResponse;
+            return postResponse;
+        } catch (HttpClientErrorException rce) {
+            return String.format(String.format("<code>%s</code><body>%s</body>", rce.getStatusCode(), rce.getStatusCode().getReasonPhrase()));
+        }
     }
 
 }

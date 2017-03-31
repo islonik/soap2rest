@@ -106,6 +106,14 @@ public class ParserServices {
         return dsResponse;
     }
 
+    public Optional<String> getHtmlCodeContent(String htmlResponse) {
+        if (htmlResponse.contains("code")) {
+            int index = htmlResponse.indexOf("code");
+            return Optional.ofNullable(htmlResponse.substring(index + 5, htmlResponse.indexOf("</", index + 5)));
+        }
+        return Optional.empty();
+    }
+
     public Optional<String> getHtmlBodyContent(String htmlResponse) {
         if (htmlResponse.contains("body")) {
             int index = htmlResponse.indexOf("body");

@@ -80,7 +80,7 @@ public class SyncResource {
 
         return ResponseEntity
                 .ok()
-                .body(responseGeneratorServices.getRandomResponse());
+                .body(responseGeneratorServices.getSuccessResponse());
     }
 
     /**
