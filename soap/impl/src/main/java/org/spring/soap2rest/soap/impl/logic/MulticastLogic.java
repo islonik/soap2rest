@@ -3,6 +3,7 @@ package org.spring.soap2rest.soap.impl.logic;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.spring.soap2rest.rest.api.model.AsyncRestRequest;
 import org.spring.soap2rest.soap.impl.generated.ds.ws.ServiceOrderStatus;
+import org.spring.soap2rest.soap.impl.generated.ds.ws.StatusType;
 import org.spring.soap2rest.soap.impl.model.Service;
 import org.spring.soap2rest.soap.impl.services.ParserServices;
 import org.springframework.stereotype.Component;
@@ -75,15 +76,31 @@ public class MulticastLogic extends AbstractLogic {
     }
 
     public static ServiceOrderStatus chooseBetweenEntities(List<ServiceOrderStatus> sosList) {
-        for (ServiceOrderStatus sos : sosList) {
-            if (!sos.getStatusType().getCode().equals(ParserServices.CODE_OK)) {
-                return sos;
+        int code = 0;
+        ServiceOrderStatus survivor = null;
+        if (sosList != null) {
+            for (ServiceOrderStatus sos : sosList) {
+                if (!sos.getStatusType().getCode().equals(ParserServices.CODE_OK)) {
+                    int tempCode = Integer.parseInt(sos.getStatusType().getCode());
+                    if (code < tempCode) {
+                        code = tempCode;
+                        survivor = sos;
+                    }
+                }
+            }
+            if (survivor != null) {
+                return survivor;
+            }
+            if (!sosList.isEmpty()) {
+                return sosList.get(0);
             }
         }
-        if (!sosList.isEmpty()) {
-            return sosList.get(0);
-        }
-        return null;
+        survivor = new ServiceOrderStatus();
+        StatusType statusType = new StatusType();
+        statusType.setCode("500");
+        statusType.setDesc("Result list is null or empty");
+        survivor.setStatusType(statusType);
+        return survivor;
     }
 
 }

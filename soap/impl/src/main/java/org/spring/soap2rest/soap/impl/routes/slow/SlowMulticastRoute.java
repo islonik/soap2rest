@@ -33,19 +33,19 @@ public class SlowMulticastRoute {
     }
 
     @ServiceActivator(inputChannel = SLOW_CHAHHEL_1, outputChannel = MulticastLogic.AGGREGATE_CHANNEL)
-    public ServiceOrderStatus get1(Service service) {
+    public ServiceOrderStatus channel1(Service service) {
         log.info("slow1");
         return multicastLogic.executeTimeout(service);
     }
 
     @ServiceActivator(inputChannel = SLOW_CHAHHEL_2, outputChannel = MulticastLogic.AGGREGATE_CHANNEL)
-    public ServiceOrderStatus get2(Service service) {
+    public ServiceOrderStatus channel2(Service service) {
         log.info("slow2");
         return multicastLogic.executeSyncGet(service);
     }
 
     @ServiceActivator(inputChannel = SLOW_CHAHHEL_3, outputChannel = MulticastLogic.AGGREGATE_CHANNEL)
-    public ServiceOrderStatus get3(Service service) {
+    public ServiceOrderStatus channel3(Service service) {
         log.info("slow3");
         return multicastLogic.executeSyncGet(service);
     }

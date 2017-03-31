@@ -13,12 +13,7 @@ import org.springframework.ws.server.endpoint.annotation.PayloadRoot;
 import org.springframework.ws.server.endpoint.annotation.RequestPayload;
 import org.springframework.ws.server.endpoint.annotation.ResponsePayload;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
-/**
- * Created by nikilipa on 2/2/17.
- */
+import java.util.concurrent.Executor;
 
 @Endpoint
 public class SoapWebService implements HandleRequestPortType {
@@ -31,7 +26,8 @@ public class SoapWebService implements HandleRequestPortType {
     @Autowired
     private SoapOrchestrator soapOrchestrator;
 
-    private ExecutorService executor = Executors.newCachedThreadPool();
+    @Autowired
+    private Executor executor;
 
     // http://localhost:8077/soap2rest/v1/soap/DeliverServiceWS
     @Override

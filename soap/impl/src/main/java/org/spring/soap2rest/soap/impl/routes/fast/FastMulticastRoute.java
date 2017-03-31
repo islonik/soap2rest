@@ -34,19 +34,19 @@ public class FastMulticastRoute {
     }
 
     @ServiceActivator(inputChannel = FAST_CHAHHEL_1, outputChannel = MulticastLogic.AGGREGATE_CHANNEL)
-    public ServiceOrderStatus get1(Service service) {
+    public ServiceOrderStatus channel1(Service service) {
         log.info("fast1");
         return multicastLogic.executeSyncGet(service);
     }
 
     @ServiceActivator(inputChannel = FAST_CHAHHEL_2, outputChannel = MulticastLogic.AGGREGATE_CHANNEL)
-    public ServiceOrderStatus get2(Service service) {
+    public ServiceOrderStatus channel2(Service service) {
         log.info("fast2");
         return multicastLogic.executeSyncGet(service);
     }
 
     @ServiceActivator(inputChannel = FAST_CHAHHEL_3, outputChannel = MulticastLogic.AGGREGATE_CHANNEL)
-    public ServiceOrderStatus get3(Service service) {
+    public ServiceOrderStatus channel3(Service service) {
         log.info("fast3");
         return multicastLogic.executeSyncGet(service);
     }
