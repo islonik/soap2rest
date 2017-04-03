@@ -3,16 +3,6 @@
         "http://java.sun.com/dtd/web-app_2_3.dtd" >
 <web-app>
 
-    <context-param>
-        <param-name>resteasy.provider.baduri</param-name>
-        <param-value>org.javaee.soap2rest.rest.web.utils.BadURIExceptionMapper</param-value>
-    </context-param>
-
-    <context-param>
-        <param-name>resteasy.provider.ejb</param-name>
-        <param-value>org.javaee.soap2rest.rest.web.utils.EjbExceptionMapper</param-value>
-    </context-param>
-
     <security-constraint>
         <web-resource-collection>
             <web-resource-name>Soap2RestSecurityDomain</web-resource-name>

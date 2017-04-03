@@ -8,6 +8,7 @@ import org.javaee.soap2rest.rest.impl.services.MessageServices;
 import org.javaee.soap2rest.rest.impl.services.ResponseGeneratorServices;
 import org.javaee.soap2rest.rest.impl.services.ValidationServices;
 import org.javaee.soap2rest.rest.web.WildFlyResources;
+import org.javaee.soap2rest.rest.web.utils.BadURIExceptionMapper;
 import org.javaee.soap2rest.utils.services.JsonServices;
 import org.mockito.Mockito;
 
@@ -31,7 +32,7 @@ public class RestTest extends JerseyTest {
         message.setMessage("Test Message");
         Mockito.when(messageServices.getRandomMessage()).thenReturn(message);
 
-        ResourceConfig resourceConfig =  new ResourceConfig(SyncResource.class, AsyncResource.class);
+        ResourceConfig resourceConfig = new ResourceConfig(SyncResource.class, AsyncResource.class);
 
         resourceConfig.register(new AbstractBinder() {
             @Override
@@ -42,6 +43,8 @@ public class RestTest extends JerseyTest {
                 bind(messageServices).to(MessageServices.class);
 
                 bind(wildFlyResources).to(WildFlyResources.class);
+
+                bind(BadURIExceptionMapper.class).to(BadURIExceptionMapper.class);
             }
         });
 

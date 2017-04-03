@@ -1,5 +1,6 @@
 package org.javaee.soap2rest.rest.web.resources;
 
+import org.javaee.soap2rest.rest.web.RestRegistration;
 import org.javaee.soap2rest.rest.web.RestRoles;
 import org.javaee.soap2rest.rest.web.WildFlyResources;
 import org.javaee.soap2rest.rest.web.model.AsyncInterrupter;
@@ -57,20 +58,20 @@ public class AsyncResource {
     @GET
     @Produces({MediaType.APPLICATION_JSON})
     //@Path("{subResources:.*}") - we can't use this expression in new resteasy because: RESTEASY002142
-    @Path("{subResources:(?!about|response|notify|timeout)(.*)}")
+    @Path("{subResources:(?!(about)|(response)|(notify)|(timeout))(.*)}")
     public Response getAbort() {
         log.info("getAbort");
         return Response
                 .ok(responseGeneratorServices.getSimpleJsonError(
                         Integer.toString(HttpURLConnection.HTTP_BAD_REQUEST),
-                        "Resource doesn't exist")
+                        RestRegistration.RESOURCE_NOT_FOUND)
                 )
                 .build();
     }
 
     @GET
     @Produces({MediaType.APPLICATION_JSON})
-    @Path("/about")
+    @Path("/about/")
     public Response getAbout() {
         log.info("getAbout");
         return Response
@@ -112,7 +113,7 @@ public class AsyncResource {
 
     // http://localhost:8078/soap2rest/rest/v1/async/response
     @GET
-    @Path("/response")
+    @Path("/response/")
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
     @RolesAllowed(RestRoles.REST_ROLE)
@@ -141,7 +142,7 @@ public class AsyncResource {
      */
     // http://localhost:8080/soap2rest/rest/v1/async/notify
     @PUT
-    @Path("/notify")
+    @Path("/notify/")
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
     @RolesAllowed(RestRoles.REST_ROLE)
@@ -166,7 +167,7 @@ public class AsyncResource {
     }
 
     @GET
-    @Path("/timeout/{id}")
+    @Path("/timeout/{id}/")
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
     @RolesAllowed(RestRoles.REST_ROLE)

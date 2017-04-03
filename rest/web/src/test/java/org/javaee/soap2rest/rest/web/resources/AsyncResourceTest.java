@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Application;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -19,6 +20,19 @@ public class AsyncResourceTest extends RestTest {
     @Override
     protected Application configure() {
         return super.configure();
+    }
+
+    @Test
+    public void testAboutCase01() throws Exception {
+        String response1 = target("async/about").request().get(String.class);
+        Assert.assertEquals("Async Realm v1\n", response1);
+    }
+
+    @Test(expected = NotFoundException.class)
+    public void testAboutCase02() throws Exception {
+        final String noResource = new String(Files.readAllBytes(Paths.get("src/test/resources/no_resource.json")));
+        String response1 = target("async/about23").request().get(String.class);
+        Assert.assertEquals(noResource, response1);
     }
 
     @Test

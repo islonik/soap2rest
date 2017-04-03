@@ -1,13 +1,16 @@
 package org.javaee.soap2rest.rest.web.utils;
 
 import org.javaee.soap2rest.rest.impl.services.ResponseGeneratorServices;
+import org.javaee.soap2rest.rest.web.RestRegistration;
 
 import javax.ejb.EJBAccessException;
 import javax.ejb.EJBException;
 import javax.inject.Inject;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
+import java.net.HttpURLConnection;
 
 @Provider
 public class EjbExceptionMapper implements ExceptionMapper<EJBException> {
@@ -28,10 +31,9 @@ public class EjbExceptionMapper implements ExceptionMapper<EJBException> {
         }
 
         return Response
-                .status(Response.Status.INTERNAL_SERVER_ERROR)
-                .entity(
-                        responseService.getSimpleJsonError(code, desc)
-                )
+                .ok()
+                .entity(responseService.getSimpleJsonError(code, desc))
+                .header("Content-Type", MediaType.APPLICATION_JSON)
                 .build();
     }
 }

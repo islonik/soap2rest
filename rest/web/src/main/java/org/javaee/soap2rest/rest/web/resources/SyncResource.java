@@ -1,6 +1,7 @@
 package org.javaee.soap2rest.rest.web.resources;
 
 import org.javaee.soap2rest.rest.impl.services.ResponseGeneratorServices;
+import org.javaee.soap2rest.rest.web.RestRegistration;
 import org.javaee.soap2rest.rest.web.RestRoles;
 import org.javaee.soap2rest.rest.web.utils.LoggerInterceptor;
 import org.slf4j.Logger;
@@ -36,13 +37,13 @@ public class SyncResource {
     @GET
     @Produces({MediaType.APPLICATION_JSON})
     //@Path("{subResources:.*}") - we can't use this expression in new resteasy because: RESTEASY002142
-    @Path("{subResources:(?!about|response)(.*)}")
+    @Path("{subResources:(?!(about)|(response))(.*)}")
     public Response getAbort() {
         log.info("getAbort");
         return Response
                 .ok(responseGeneratorServices.getSimpleJsonError(
                         Integer.toString(HttpURLConnection.HTTP_BAD_REQUEST),
-                        "Resource doesn't exist")
+                        RestRegistration.RESOURCE_NOT_FOUND)
                 )
                 .build();
     }
