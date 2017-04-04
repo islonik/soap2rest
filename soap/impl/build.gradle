@@ -1,0 +1,33 @@
+buildscript {
+    repositories{
+        jcenter()
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'no.nils:wsdl2java:0.10'
+    }
+}
+
+apply plugin :'java'
+apply plugin :'no.nils.wsdl2java'
+
+dependencies {
+    compile project(':utils')
+    compile project(':rest:api')
+
+    compile 'org.springframework.boot:spring-boot-starter-integration:1.5.2.RELEASE'
+    compile 'com.google.guava:guava:21.0'
+}
+
+wsdl2java{
+    wsdlsToGenerate = [
+            ['-p','org.spring.soap2rest.soap.impl.generated.ds.ws', '-autoNameResolution',"$projectDir/src/main/resources/wsdl/ds.wsdl"]
+    ]
+    generatedWsdlDir = file("$projectDir/build/generatedsources")
+    wsdlDir = file("$projectDir/src/main/resources/wsdl")
+    locale = Locale.FRANCE
+}
+
+wsdl2javaExt {
+    cxfVersion = "2.5.1"
+}

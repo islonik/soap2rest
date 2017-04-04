@@ -9,14 +9,19 @@ RemoteSystemsTempFiles/
 .settings/
 .classpath
 .project
+.gradle/
 #Intellij Idea
 .idea/
 *.iml
 
 # binaries
 bin/
+build/
 target/
+gradle/
 *.class
+*.bat
+*.sh
 
 # some non-source directories and files
 *.log

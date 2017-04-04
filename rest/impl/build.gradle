@@ -1,0 +1,7 @@
+dependencies {
+    compile project(':utils')
+    compile project(':rest:api')
+
+    compile 'org.liquibase:liquibase-core:3.5.3'
+    compile 'com.h2database:h2:1.4.193'
+}
