@@ -23,6 +23,18 @@ public class RouteServices {
     public static final String SLOW_MULTICAST_ID = ServiceType.SLOW + RouteServices.MULTICAST;
     public static final String SLOW_SYNC_ID = ServiceType.SLOW + RouteServices.SYNC;
 
+    public static String valueOf(String name) {
+        if (name.equalsIgnoreCase(ASYNC)) {
+            return ASYNC;
+        } else if (name.equalsIgnoreCase(MULTICAST)) {
+            return MULTICAST;
+        } else if (name.equalsIgnoreCase(SYNC)) {
+            return SYNC;
+        } else {
+            throw new IllegalArgumentException(String.format("Unknown '%s' service name.", name));
+        }
+    }
+
     public static String valueOf(String serviceType, String name) {
         return serviceType + name;
     }

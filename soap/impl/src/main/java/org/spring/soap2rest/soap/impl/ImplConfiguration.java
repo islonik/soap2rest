@@ -14,9 +14,13 @@ import org.springframework.integration.config.EnableIntegration;
 import org.springframework.integration.dsl.IntegrationFlow;
 import org.springframework.integration.dsl.IntegrationFlows;
 import org.springframework.messaging.MessageChannel;
+import org.springframework.scheduling.annotation.EnableAsync;
 
+import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -25,6 +29,7 @@ import java.util.stream.Collectors;
 @Configuration
 @PropertySource("classpath:impl.properties")
 @EnableIntegration
+@EnableAsync
 public class ImplConfiguration {
 
     @Bean
@@ -110,10 +115,13 @@ public class ImplConfiguration {
                             return MulticastLogic.chooseBetweenEntities(
                                     g.getMessages()
                                             .stream()
-                                            .map(m -> (ServiceOrderStatus) m.getPayload())
+                                            .map(m -> (Future<ServiceOrderStatus>) m.getPayload())
                                             .collect(Collectors.toList())
                             );
                         })
+                        .expireGroupsUponCompletion(true)
+                        .expireGroupsUponTimeout(true)
+                        .groupTimeout(3000L)
                 )
                 .get();
     }

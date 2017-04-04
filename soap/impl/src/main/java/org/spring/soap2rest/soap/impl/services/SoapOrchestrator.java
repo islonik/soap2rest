@@ -3,7 +3,6 @@ package org.spring.soap2rest.soap.impl.services;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.spring.soap2rest.rest.api.model.AsyncRestRequest;
 import org.spring.soap2rest.soap.impl.generated.ds.ws.DSRequest;
 import org.spring.soap2rest.soap.impl.generated.ds.ws.DSResponse;
 import org.spring.soap2rest.soap.impl.generated.ds.ws.ServiceOrderStatus;

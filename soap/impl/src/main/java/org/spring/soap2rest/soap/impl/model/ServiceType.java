@@ -23,9 +23,9 @@ public class ServiceType {
         } else if (MEDIUM.equalsIgnoreCase(action)) {
             return MEDIUM;
         } else if (SLOW.equalsIgnoreCase(action)) {
-            return  SLOW;
+            return SLOW;
         } else {
-            throw new IllegalArgumentException(String.format("Unknown service type."));
+            throw new IllegalArgumentException(String.format("Unknown '%s' service type.", action));
         }
     }
 }

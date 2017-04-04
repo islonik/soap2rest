@@ -8,7 +8,11 @@ import org.spring.soap2rest.soap.impl.model.Service;
 import org.spring.soap2rest.soap.impl.services.RouteServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.integration.annotation.ServiceActivator;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Component;
+
+import java.util.concurrent.Future;
 
 /**
  * Created by nikilipa on 3/29/17.
@@ -32,22 +36,25 @@ public class SlowMulticastRoute {
         return service;
     }
 
+    @Async
     @ServiceActivator(inputChannel = SLOW_CHAHHEL_1, outputChannel = MulticastLogic.AGGREGATE_CHANNEL)
-    public ServiceOrderStatus channel1(Service service) {
+    public Future<ServiceOrderStatus> channel1(Service service) {
         log.info("slow1");
-        return multicastLogic.executeTimeout(service);
+        return new AsyncResult(multicastLogic.executeTimeout(service));
     }
 
+    @Async
     @ServiceActivator(inputChannel = SLOW_CHAHHEL_2, outputChannel = MulticastLogic.AGGREGATE_CHANNEL)
-    public ServiceOrderStatus channel2(Service service) {
+    public Future<ServiceOrderStatus> channel2(Service service) {
         log.info("slow2");
-        return multicastLogic.executeSyncGet(service);
+        return new AsyncResult(multicastLogic.endlessCycle(service));
     }
 
+    @Async
     @ServiceActivator(inputChannel = SLOW_CHAHHEL_3, outputChannel = MulticastLogic.AGGREGATE_CHANNEL)
-    public ServiceOrderStatus channel3(Service service) {
+    public Future<ServiceOrderStatus> channel3(Service service) {
         log.info("slow3");
-        return multicastLogic.executeSyncGet(service);
+        return new AsyncResult(multicastLogic.endlessCycle(service));
     }
 
 }

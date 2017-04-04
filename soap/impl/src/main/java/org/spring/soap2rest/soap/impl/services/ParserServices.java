@@ -134,7 +134,7 @@ public class ParserServices {
         }
         return new Service(
                 dsRequest.getBody().getServiceOrder().getServiceOrderID(),
-                dsRequest.getBody().getServiceOrder().getServiceName(),
+                RouteServices.valueOf(dsRequest.getBody().getServiceOrder().getServiceName()),
                 ServiceType.valueOf(dsRequest.getBody().getServiceOrder()),
                 dsRequest.getHeader().getMessageId(),
                 dsRequest.getHeader().getConversationId(),

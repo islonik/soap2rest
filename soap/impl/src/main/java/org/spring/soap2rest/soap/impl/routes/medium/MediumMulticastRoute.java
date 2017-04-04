@@ -9,7 +9,11 @@ import org.spring.soap2rest.soap.impl.model.Service;
 import org.spring.soap2rest.soap.impl.services.RouteServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.integration.annotation.ServiceActivator;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Component;
+
+import java.util.concurrent.Future;
 
 /**
  * Created by nikilipa on 3/29/17.
@@ -33,22 +37,25 @@ public class MediumMulticastRoute {
         return service;
     }
 
+    @Async
     @ServiceActivator(inputChannel = MEDIUM_CHAHHEL_1, outputChannel = MulticastLogic.AGGREGATE_CHANNEL)
-    public ServiceOrderStatus channel1(Service service) throws JsonProcessingException {
+    public Future<ServiceOrderStatus> channel1(Service service) throws JsonProcessingException {
         log.info("medium1");
-        return multicastLogic.executePost(service);
+        return new AsyncResult(multicastLogic.executePost(service));
     }
 
+    @Async
     @ServiceActivator(inputChannel = MEDIUM_CHAHHEL_2, outputChannel = MulticastLogic.AGGREGATE_CHANNEL)
-    public ServiceOrderStatus channel2(Service service) throws JsonProcessingException {
+    public Future<ServiceOrderStatus> channel2(Service service) throws JsonProcessingException {
         log.info("medium2");
-        return multicastLogic.executeAsyncGet(service);
+        return new AsyncResult(multicastLogic.executeAsyncGet(service));
     }
 
+    @Async
     @ServiceActivator(inputChannel = MEDIUM_CHAHHEL_3, outputChannel = MulticastLogic.AGGREGATE_CHANNEL)
-    public ServiceOrderStatus channel3(Service service) throws JsonProcessingException {
+    public Future<ServiceOrderStatus> channel3(Service service) throws JsonProcessingException {
         log.info("medium3");
-        return multicastLogic.executeAsyncGet(service);
+        return new AsyncResult(multicastLogic.endlessCycle(service));
     }
 
 }
