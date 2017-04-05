@@ -1,6 +1,6 @@
 dependencies {
     compile project(':rest:impl')
 
-    compile 'org.springframework.boot:spring-boot-starter-security:1.5.2.RELEASE'
-    compile 'org.springframework.boot:spring-boot-starter-aop:1.5.2.RELEASE'
+    compile "org.springframework.boot:spring-boot-starter-security:${versions.springBoot}"
+    compile "org.springframework.boot:spring-boot-starter-aop:${versions.springBoot}"
 }

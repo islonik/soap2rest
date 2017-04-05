@@ -15,8 +15,8 @@ dependencies {
     compile project(':utils')
     compile project(':rest:api')
 
-    compile 'org.springframework.boot:spring-boot-starter-integration:1.5.2.RELEASE'
-    compile 'com.google.guava:guava:21.0'
+    compile "org.springframework.boot:spring-boot-starter-integration:${versions.springBoot}"
+    compile "com.google.guava:guava:${versions.guava}"
 }
 
 wsdl2java{

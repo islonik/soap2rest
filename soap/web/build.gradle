@@ -1,7 +1,7 @@
 dependencies {
     compile project(':soap:impl')
 
-    compile 'org.springframework.ws:spring-ws-core:2.4.0.RELEASE'
-    compile 'org.springframework.ws:spring-ws-security:2.4.0.RELEASE'
-    compile 'org.apache.santuario:xmlsec:2.0.8'
+    compile "org.springframework.ws:spring-ws-core:${versions.springWc}"
+    compile "org.springframework.ws:spring-ws-security:${versions.springWc}"
+    compile "org.apache.santuario:xmlsec:${versions.xmlsec}"
 }

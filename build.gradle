@@ -6,24 +6,41 @@
  * user guide available at https://docs.gradle.org/3.4.1/userguide/tutorial_java_projects.html
  */
 
-// Apply the java plugin to add support for Java
+// Multiple dependencies can be shared under the same name:
+ext.libraries = [
+        jackson: [ // Groovy list literal
+                   "com.fasterxml.jackson.core:jackson-core:${JacksonVersion}",
+                   "com.fasterxml.jackson.core:jackson-databind:${JacksonVersion}"
+        ]
+]
 
-
-// Apply the application plugin to add support for building an application
-//apply plugin: 'application'
-
-allprojects {
+subprojects {
     apply plugin: 'java'
+    apply plugin: 'idea'
+
+    sourceCompatibility = 1.8
 
     repositories {
         mavenCentral()
         mavenLocal()
     }
 
-    dependencies {
-        compile("org.springframework.boot:spring-boot-starter-web:1.5.2.RELEASE")
-        compile("org.springframework.boot:spring-boot-starter-data-jpa:1.5.2.RELEASE")
+    // specific replacement of dependencymanagement in maven
+    ext.versions = [
+            springBoot: '1.5.2.RELEASE',
+            springWc: '2.4.0.RELEASE',
+            liquibase : '3.5.3',
+            h2 : '1.4.193',
+            guava : '21.0',
+            xmlsec : '2.0.8'
+    ]
 
-        testCompile ("org.springframework.boot:spring-boot-starter-test:1.5.2.RELEASE")
+    dependencies {
+        compile("org.springframework.boot:spring-boot-starter-web:${versions.springBoot}")
+        compile("org.springframework.boot:spring-boot-starter-data-jpa:${versions.springBoot}")
+
+        testCompile ("org.springframework.boot:spring-boot-starter-test:${versions.springBoot}")
     }
+
+
 }
