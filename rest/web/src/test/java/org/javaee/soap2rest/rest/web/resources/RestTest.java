@@ -8,7 +8,7 @@ import org.javaee.soap2rest.rest.impl.services.MessageServices;
 import org.javaee.soap2rest.rest.impl.services.ResponseGeneratorServices;
 import org.javaee.soap2rest.rest.impl.services.ValidationServices;
 import org.javaee.soap2rest.rest.web.WildFlyResources;
-import org.javaee.soap2rest.rest.web.utils.BadURIExceptionMapper;
+import org.javaee.soap2rest.rest.web.utils.ExceptionHandler;
 import org.javaee.soap2rest.utils.services.JsonServices;
 import org.mockito.Mockito;
 
@@ -44,7 +44,7 @@ public class RestTest extends JerseyTest {
 
                 bind(wildFlyResources).to(WildFlyResources.class);
 
-                bind(BadURIExceptionMapper.class).to(BadURIExceptionMapper.class);
+                bind(ExceptionHandler.class).to(ExceptionHandler.class);
             }
         });
 

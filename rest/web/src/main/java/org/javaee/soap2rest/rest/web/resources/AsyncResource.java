@@ -55,19 +55,20 @@ public class AsyncResource {
     @Inject
     private WildFlyResources wildFlyResources;
 
-    @GET
-    @Produces({MediaType.APPLICATION_JSON})
-    //@Path("{subResources:.*}") - we can't use this expression in new resteasy because: RESTEASY002142
-    @Path("{subResources:(?!(about)|(response)|(notify)|(timeout))(.*)}")
-    public Response getAbort() {
-        log.info("getAbort");
-        return Response
-                .ok(responseGeneratorServices.getSimpleJsonError(
-                        Integer.toString(HttpURLConnection.HTTP_BAD_REQUEST),
-                        RestRegistration.RESOURCE_NOT_FOUND)
-                )
-                .build();
-    }
+    // This is an example how you can manage regexp in WildFly10, but in real application it is bad practice. You should use ExceptionMapper instead of it.
+//    @GET
+//    @Produces({MediaType.APPLICATION_JSON})
+//    //@Path("{subResources:.*}") - we can't use this expression in new resteasy because: RESTEASY002142
+//    @Path("{subResources:(?!(about)|(response)|(notify)|(timeout))(.*)}")
+//    public Response getAbort() {
+//        log.info("getAbort");
+//        return Response
+//                .ok(responseGeneratorServices.getSimpleJsonError(
+//                        Integer.toString(HttpURLConnection.HTTP_BAD_REQUEST),
+//                        RestRegistration.RESOURCE_NOT_FOUND)
+//                )
+//                .build();
+//    }
 
     @GET
     @Produces({MediaType.APPLICATION_JSON})

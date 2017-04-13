@@ -1,7 +1,6 @@
 package org.javaee.soap2rest.rest.web.resources;
 
 import org.javaee.soap2rest.rest.impl.services.ResponseGeneratorServices;
-import org.javaee.soap2rest.rest.web.RestRegistration;
 import org.javaee.soap2rest.rest.web.RestRoles;
 import org.javaee.soap2rest.rest.web.utils.LoggerInterceptor;
 import org.slf4j.Logger;
@@ -16,7 +15,6 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.net.HttpURLConnection;
 import java.util.Map;
 
 /**
@@ -34,19 +32,20 @@ public class SyncResource {
     @Inject
     private ResponseGeneratorServices responseGeneratorServices;
 
-    @GET
-    @Produces({MediaType.APPLICATION_JSON})
-    //@Path("{subResources:.*}") - we can't use this expression in new resteasy because: RESTEASY002142
-    @Path("{subResources:(?!(about)|(response))(.*)}")
-    public Response getAbort() {
-        log.info("getAbort");
-        return Response
-                .ok(responseGeneratorServices.getSimpleJsonError(
-                        Integer.toString(HttpURLConnection.HTTP_BAD_REQUEST),
-                        RestRegistration.RESOURCE_NOT_FOUND)
-                )
-                .build();
-    }
+    // This is an example how you can manage regexp in WildFly10, but in real application it is bad practice. You should use ExceptionMapper instead of it.
+//    @GET
+//    @Produces({MediaType.APPLICATION_JSON})
+//    //@Path("{subResources:.*}") - we can't use this expression in new resteasy because: RESTEASY002142
+//    @Path("{subResources:(?!(about)|(response))(.*)}")
+//    public Response getAbort() {
+//        log.info("getAbort");
+//        return Response
+//                .ok(responseGeneratorServices.getSimpleJsonError(
+//                        Integer.toString(HttpURLConnection.HTTP_BAD_REQUEST),
+//                        RestRegistration.RESOURCE_NOT_FOUND)
+//                )
+//                .build();
+//    }
 
     @GET
     @Produces({MediaType.APPLICATION_JSON})
@@ -58,9 +57,7 @@ public class SyncResource {
     }
 
     /**
-
-     curl -X GET http://localhost:8078/soap2rest/rest/v1/sync/response --user restadmin:restadmin
-
+     * curl -X GET http://localhost:8078/soap2rest/rest/v1/sync/response --user restadmin:restadmin
      */
 
     // http://localhost:8078/soap2rest/rest/v1/sync/response
@@ -81,9 +78,7 @@ public class SyncResource {
     }
 
     /**
-
-     curl -X PUT http://localhost:8078/soap2rest/rest/v1/sync/response --user restadmin:restadmin
-
+     * curl -X PUT http://localhost:8078/soap2rest/rest/v1/sync/response --user restadmin:restadmin
      */
 
     // http://localhost:8078/soap2rest/rest/v1/sync/response
@@ -105,11 +100,9 @@ public class SyncResource {
     }
 
     /**
-
-     curl -X POST -H "Content-Type: application/json" -d '{
-        "test44" : "test55"
-     }' http://localhost:8078/soap2rest/rest/v1/sync/response --user restadmin:restadmin
-
+     * curl -X POST -H "Content-Type: application/json" -d '{
+     * "test44" : "test55"
+     * }' http://localhost:8078/soap2rest/rest/v1/sync/response --user restadmin:restadmin
      */
 
     // http://localhost:8078/soap2rest/rest/v1/sync/response

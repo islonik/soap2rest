@@ -3,6 +3,17 @@
         "http://java.sun.com/dtd/web-app_2_3.dtd" >
 <web-app>
 
+    <!-- Alternative way of registration this handler. The first way via RestRegistration. -->
+    <!--context-param>
+        <param-name>resteasy.providers</param-name>
+        <param-value>org.javaee.soap2rest.rest.web.utils.ExceptionHandler</param-value>
+    </context-param-->
+
+    <error-page>
+        <error-code>401</error-code>
+        <location>/401.json</location>
+    </error-page>
+
     <security-constraint>
         <web-resource-collection>
             <web-resource-name>Soap2RestSecurityDomain</web-resource-name>
