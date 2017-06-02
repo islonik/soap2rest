@@ -17,6 +17,7 @@ dependencies {
 
     compile "org.springframework.boot:spring-boot-starter-integration:${versions.springBoot}"
     compile "com.google.guava:guava:${versions.guava}"
+    compile "com.h2database:h2:${versions.h2}"
 }
 
 wsdl2java{

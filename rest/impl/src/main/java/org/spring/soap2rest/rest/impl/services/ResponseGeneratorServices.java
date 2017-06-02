@@ -1,12 +1,12 @@
 package org.spring.soap2rest.rest.impl.services;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.spring.soap2rest.rest.api.model.ErrorType;
 import org.spring.soap2rest.rest.api.model.RestResponse;
 import org.spring.soap2rest.rest.impl.model.Message;
 import org.spring.soap2rest.utils.services.JsonServices;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

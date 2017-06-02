@@ -1,6 +1,9 @@
 package org.spring.soap2rest.rest.web.model;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.StringTokenizer;
 
 /**
  * Created by nikilipa on 3/8/17.
