@@ -3,11 +3,12 @@ package org.javaee.soap2rest.utils.liquibase;
 import org.javaee.soap2rest.utils.liquibase.annotations.Schema;
 import org.junit.Test;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 
 import static java.util.stream.Collectors.toList;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 /**
  * Created by nikilipa on 2/27/17.
@@ -26,7 +27,7 @@ public class SimpleSchemesBuilderTest {
     public void testCompareToCase01() {
         Collection schemes = Arrays.asList("C", "B", "A").stream()
                 .map((s) -> String.format("org.javaee.soap2rest.utils.liquibase.%s", s))
-                .map((s) -> this.getClass(s))
+                .map(this::getClass)
                 .map((c) -> (Schema) c.getAnnotation(Schema.class))
                 .collect(toList());
 
@@ -40,11 +41,14 @@ public class SimpleSchemesBuilderTest {
 
 
 // schemas
-@Schema(name = "A", resource = "fileA.xml") class A {
+@Schema(name = "A", resource = "fileA.xml")
+class A {
 }
 
-@Schema(name = "B", resource = "fileB.xml") class B {
+@Schema(name = "B", resource = "fileB.xml")
+class B {
 }
 
-@Schema(name = "C", resource = "fileC.xml") class C {
+@Schema(name = "C", resource = "fileC.xml")
+class C {
 }

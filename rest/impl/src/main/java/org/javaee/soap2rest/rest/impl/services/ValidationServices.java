@@ -37,12 +37,12 @@ public class ValidationServices {
             }
             return Optional.of(
                     Response
-                    .status(Response.Status.BAD_REQUEST)
-                    .entity(responseServices.getSimpleJsonError(
-                            Response.Status.BAD_REQUEST.toString(),
-                            badCases.toString()
-                    ))
-                    .build()
+                            .status(Response.Status.BAD_REQUEST)
+                            .entity(responseServices.getSimpleJsonError(
+                                    Response.Status.BAD_REQUEST.toString(),
+                                    badCases.toString()
+                            ))
+                            .build()
             );
         }
         return Optional.empty();

@@ -25,7 +25,7 @@ public class JsonServices {
         return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(tag);
     }
 
-    public <T>T jsonToObject(String json, Class<T> className) throws IOException {
+    public <T> T jsonToObject(String json, Class<T> className) throws IOException {
         return mapper.readValue(json, className);
     }
 

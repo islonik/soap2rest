@@ -23,7 +23,7 @@ public class AsyncResourceTest extends RestTest {
     }
 
     @Test
-    public void testAboutCase01() throws Exception {
+    public void testAboutCase01() {
         String response1 = target("async/about").request().get(String.class);
         Assert.assertEquals("Async Realm v1\n", response1);
     }

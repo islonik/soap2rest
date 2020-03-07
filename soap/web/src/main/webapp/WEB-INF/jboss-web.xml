@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?>  
+<?xml version="1.0" encoding="UTF-8"?>
 <jboss-web>
     <security-domain flushOnSessionInvalidation="true">Soap2RestSecurityDomain</security-domain>
-	<context-root>/soap2rest/soap/v1</context-root>
+    <context-root>/soap2rest/soap/v1</context-root>
 </jboss-web>  

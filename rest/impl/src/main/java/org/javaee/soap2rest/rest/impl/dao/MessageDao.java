@@ -1,10 +1,10 @@
 package org.javaee.soap2rest.rest.impl.dao;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import org.javaee.soap2rest.rest.impl.model.Message;
 import org.javaee.soap2rest.utils.sql.DaoSupport;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.List;
 
 /**

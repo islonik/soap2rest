@@ -1,7 +1,7 @@
 package org.javaee.soap2rest.soap.impl.camel;
 
+import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
-import org.apache.camel.processor.aggregate.AggregationStrategy;
 
 import java.util.Optional;
 import java.util.Set;
@@ -35,9 +35,7 @@ public class S2RAggregationStrategy implements AggregationStrategy {
 
     private Exchange handle(Exchange returnExchange, Exchange check, String key) {
         Optional<Object> value = Optional.ofNullable(check.getIn().getHeader(key));
-        if (value.isPresent()) {
-            returnExchange.getIn().setHeader(key, value.get());
-        }
+        value.ifPresent(o -> returnExchange.getIn().setHeader(key, o));
         return returnExchange;
     }
 

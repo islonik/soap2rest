@@ -1,9 +1,7 @@
 <databaseChangeLog
         xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xmlns:ora="http://www.liquibase.org/xml/ns/dbchangelog-ext"
-        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
-    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
 
     <changeSet logicalFilePath="s2r/auth_changelog.xml" id="s2r.soap-v1" author="islonik">
         <preConditions onError="MARK_RAN" onFail="MARK_RAN">
@@ -12,10 +10,10 @@
             </not>
         </preConditions>
         <createTable tableName="s2r_soap_auth">
-            <column name="id"          type="UUID" defaultValueComputed="sys_guid()" />
-            <column name="service"     type="varchar2(50)"/>
-            <column name="username"    type="varchar2(50)"/>
-            <column name="passphrase"  type="varchar2(50)"/>
+            <column name="id" type="UUID" defaultValueComputed="sys_guid()"/>
+            <column name="service" type="varchar2(50)"/>
+            <column name="username" type="varchar2(50)"/>
+            <column name="passphrase" type="varchar2(50)"/>
         </createTable>
         <addPrimaryKey tableName="s2r_soap_auth" columnNames="id"/>
         <addUniqueConstraint tableName="s2r_soap_auth" columnNames="service"/>

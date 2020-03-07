@@ -12,6 +12,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
 public @interface Schema {
-	String name();
-	String[] resource();
+    String name();
+
+    String[] resource();
 }

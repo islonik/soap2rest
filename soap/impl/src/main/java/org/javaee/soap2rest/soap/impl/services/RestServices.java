@@ -2,8 +2,8 @@ package org.javaee.soap2rest.soap.impl.services;
 
 import org.javaee.soap2rest.rest.api.model.RestResponse;
 import org.javaee.soap2rest.soap.impl.generated.ds.ws.ServiceOrderStatus;
-import org.javaee.soap2rest.soap.impl.model.sql.AuthUser;
 import org.javaee.soap2rest.soap.impl.model.Service;
+import org.javaee.soap2rest.soap.impl.model.sql.AuthUser;
 import org.javaee.soap2rest.soap.impl.rest.ChangeClient;
 import org.javaee.soap2rest.soap.impl.rest.GetClient;
 import org.javaee.soap2rest.soap.impl.rest.PostClient;

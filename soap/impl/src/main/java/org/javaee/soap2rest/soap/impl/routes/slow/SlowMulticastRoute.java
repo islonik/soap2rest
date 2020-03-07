@@ -1,8 +1,8 @@
 package org.javaee.soap2rest.soap.impl.routes.slow;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.javaee.soap2rest.soap.impl.camel.S2RAggregationStrategy;
 import org.javaee.soap2rest.soap.impl.WildFlyResources;
+import org.javaee.soap2rest.soap.impl.camel.S2RAggregationStrategy;
 import org.javaee.soap2rest.soap.impl.generated.ds.ws.ServiceOrderStatus;
 import org.javaee.soap2rest.soap.impl.logic.MulticastLogic;
 import org.javaee.soap2rest.soap.impl.model.Service;
@@ -146,7 +146,7 @@ public class SlowMulticastRoute extends RouteBuilder {
             log.info(performanceMeasure);
 
             ServiceOrderStatus outSos = multicastLogic.chooseBetweenEntities(service, performanceMeasure, sosGet, sosPut, sosPost);
-            exchange.getOut().setBody(outSos);
+            exchange.getMessage().setBody(outSos);
         });
     }
 

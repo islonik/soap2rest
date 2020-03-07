@@ -1,13 +1,10 @@
 <wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
-                  xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
-                  xmlns:ns="http://www.nikilipa.org/Common/MessageHeader/v01"
                   xmlns:ns1="http://www.nikilipa.org/SoapServiceRequest/v01"
                   xmlns:ns2="http://www.nikilipa.org/SoapServiceResponse/v01"
                   xmlns:tns="http://nikilipa.org/Service/DeliverService/v01/DeliverServiceWS"
                   xmlns:http="http://schemas.xmlsoap.org/wsdl/http/"
                   xmlns:xs="http://www.w3.org/2001/XMLSchema"
                   xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
-                  xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/"
                   targetNamespace="http://nikilipa.org/Service/DeliverService/v01/DeliverServiceWS">
 
     <plnk:partnerLinkType xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype"
@@ -21,14 +18,14 @@
                    elementFormDefault="qualified"
                    targetNamespace="http://www.nikilipa.org/Common/MessageHeader/v01"
                    version="v01">
-            
+
             <xs:complexType name="messageHeaderType">
                 <xs:sequence>
-                    <xs:element name="messageId"      type="xs:string" minOccurs="0" maxOccurs="1"/>
+                    <xs:element name="messageId" type="xs:string" minOccurs="0" maxOccurs="1"/>
                     <xs:element name="conversationId" type="xs:string" minOccurs="0" maxOccurs="1"/>
                 </xs:sequence>
             </xs:complexType>
-            
+
             <xs:complexType name="statusType">
                 <xs:sequence>
                     <xs:element name="code" type="xs:string" minOccurs="1" maxOccurs="1"/>
@@ -36,10 +33,10 @@
                     <xs:element name="result" type="xs:string" minOccurs="0" maxOccurs="1"/>
                 </xs:sequence>
             </xs:complexType>
-            
+
             <xs:complexType name="keyValuesType">
                 <xs:sequence>
-                    <xs:element name="key"   type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="key" type="xs:string" minOccurs="1" maxOccurs="1"/>
                     <xs:element name="value" type="xs:string" minOccurs="1" maxOccurs="1"/>
                 </xs:sequence>
             </xs:complexType>
@@ -53,7 +50,7 @@
                    targetNamespace="http://www.nikilipa.org/SoapServiceRequest/v01"
                    version="v01">
             <xs:import namespace="http://www.nikilipa.org/Common/MessageHeader/v01"/>
-            
+
             <xs:element name="DSRequest">
                 <xs:complexType>
                     <xs:sequence>
@@ -69,13 +66,13 @@
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
-            
+
             <xs:complexType name="ServiceOrder">
                 <xs:sequence>
                     <xs:element name="ServiceOrderID" type="xs:string"/>
-                    <xs:element name="ServiceName"    type="xs:string"/>
-                    <xs:element name="ServiceType"    type="xs:string"/>
-                    <xs:element name="Params" type="header:keyValuesType" minOccurs="0" maxOccurs="unbounded" />
+                    <xs:element name="ServiceName" type="xs:string"/>
+                    <xs:element name="ServiceType" type="xs:string"/>
+                    <xs:element name="Params" type="header:keyValuesType" minOccurs="0" maxOccurs="unbounded"/>
                 </xs:sequence>
             </xs:complexType>
 
@@ -125,7 +122,7 @@
 
     <wsdl:portType name="handleRequest_PortType">
         <wsdl:operation name="handleRequest">
-            <wsdl:input  message="tns:handleRequest"/>
+            <wsdl:input message="tns:handleRequest"/>
             <wsdl:output message="tns:handleResponse"/>
         </wsdl:operation>
     </wsdl:portType>

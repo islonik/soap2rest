@@ -71,7 +71,7 @@ public class LiquibaseRunner {
                 public CDILiquibaseConfig call() throws Exception {
                     File s2rDir = new File(String.format("%s/s2r/schemes", ROOT_PATH));
                     if (!s2rDir.exists()) {
-                        if(s2rDir.mkdirs()) {
+                        if (s2rDir.mkdirs()) {
                             log.debug("File [path={}] was deleted", s2rDir.getAbsolutePath());
                         }
                     }
@@ -96,7 +96,7 @@ public class LiquibaseRunner {
                     log.info("Scanning application for liquibase schemes.");
 
                     StringBuilder schemes = treeBuilder.build(
-                                bm.getBeans(Object.class, new AnnotationLiteral<Liquibase>() {
+                            bm.getBeans(Object.class, new AnnotationLiteral<Liquibase>() {
                             }).stream()
                                     .map((b) -> b.getBeanClass())
                                     .map((c) -> c.getAnnotation(Schema.class))
@@ -186,7 +186,7 @@ public class LiquibaseRunner {
     private String copyToFile(File s2r, String schema) {
         log.trace("copyToFile({}, {})", s2r, schema);
 
-        try (InputStreamReader isr = new InputStreamReader(getClass().getResourceAsStream(schema), Charsets.UTF_8)){
+        try (InputStreamReader isr = new InputStreamReader(getClass().getResourceAsStream(schema), Charsets.UTF_8)) {
             log.info("Transferring schema [resource={}] to directory [path={}]", schema, s2r.getAbsolutePath());
             String path = schema.startsWith("/") ? schema.substring(1) : schema;
             log.debug("Schema path is [{}]", path);

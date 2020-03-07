@@ -51,8 +51,7 @@ public class SoapWebService implements HandleRequestPortType {
     @Override
     @RolesAllowed(SoapRoles.SOAP_ROLE)
     public DSResponse handleRequest(
-            @WebParam(name = "DSRequest", targetNamespace = "http://www.nikilipa.org/SoapServiceRequest/v01", partName = "parameter")
-                    final DSRequest dsRequest) {
+            @WebParam(name = "DSRequest", targetNamespace = "http://www.nikilipa.org/SoapServiceRequest/v01", partName = "parameter") final DSRequest dsRequest) {
 
         MessageContext mc = wsContext.getMessageContext();
         HttpServletRequest httpRequest = (HttpServletRequest) mc.get(MessageContext.SERVLET_REQUEST);

@@ -49,14 +49,14 @@ public class JaxbServices {
         }
     }
 
-    public DSResponse getDsResponse(SOAPMessage message) throws JAXBException, XMLStreamException, SOAPException  {
+    public DSResponse getDsResponse(SOAPMessage message) throws JAXBException, XMLStreamException, SOAPException {
         Unmarshaller dsResponseUnmarshaller = dsResponse.createUnmarshaller();
         return (DSResponse) dsResponseUnmarshaller.unmarshal(message.getSOAPBody().extractContentAsDocument());
     }
 
     public DSRequest getDsRequest(SOAPMessage message) throws JAXBException, XMLStreamException, SOAPException {
         Unmarshaller dsRequestUnmarshaller = dsRequest.createUnmarshaller();
-        return (DSRequest)dsRequestUnmarshaller.unmarshal(message.getSOAPBody().extractContentAsDocument());
+        return (DSRequest) dsRequestUnmarshaller.unmarshal(message.getSOAPBody().extractContentAsDocument());
     }
 
     public void setDsResponse(DSResponse dsResponse, SOAPBody soapBody) throws JAXBException {

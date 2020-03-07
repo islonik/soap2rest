@@ -8,7 +8,6 @@ import org.javaee.soap2rest.soap.impl.logic.MulticastLogic;
 import org.javaee.soap2rest.soap.impl.model.Service;
 import org.javaee.soap2rest.soap.impl.model.ServiceType;
 import org.javaee.soap2rest.soap.impl.routes.ExceptionRoute;
-import org.javaee.soap2rest.soap.impl.services.ParserServices;
 import org.javaee.soap2rest.soap.impl.services.RestServices;
 import org.javaee.soap2rest.soap.impl.services.RouteServices;
 import org.javaee.soap2rest.utils.services.JsonServices;
@@ -147,7 +146,7 @@ public class FastMulticastRoute extends RouteBuilder {
             log.info(performanceMeasure);
 
             ServiceOrderStatus outSos = multicastLogic.chooseBetweenEntities(service, performanceMeasure, sosGet1, sosGet2, sosGet3);
-            exchange.getOut().setBody(outSos);
+            exchange.getMessage().setBody(outSos);
         });
     }
 

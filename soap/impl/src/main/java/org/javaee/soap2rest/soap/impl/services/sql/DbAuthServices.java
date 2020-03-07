@@ -22,7 +22,7 @@ import java.util.concurrent.TimeUnit;
 @ApplicationScoped
 @Default
 @Liquibase
-@Schema(name="s2r_soap_auth", resource = "/liquibase/auth_changelog.xml")
+@Schema(name = "s2r_soap_auth", resource = "/liquibase/auth_changelog.xml")
 public class DbAuthServices implements SoapScheduler {
 
     private static final Logger log = LoggerFactory.getLogger(DbAuthServices.class);
