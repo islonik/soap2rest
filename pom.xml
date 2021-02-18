@@ -17,7 +17,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <jasckson.version>2.10.3</jasckson.version>
+        <jasckson.version>2.12.1</jasckson.version>
         <camel.version>3.1.0</camel.version>
         <liquibase.version>3.5.1</liquibase.version>
         <guava.version>21.0</guava.version>
